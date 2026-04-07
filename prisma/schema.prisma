@@ -1,0 +1,84 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String            @id @default(uuid())
+  fullName      String
+  email         String            @unique
+  password      String
+  role          Role              @default(USER)
+  city          String?
+  address       String?
+  status        Status            @default(PENDING)
+  language      String            @default("en")
+  theme         String            @default("light")
+  createdAt     DateTime          @default(now())
+  financials    FinancialDetail?
+  documents     Document[]
+  notifications Notification[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Status {
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
+model FinancialDetail {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id])
+  cardName      String
+  cardNumberEnc String
+  expiryDate    String
+  cvcEnc        String
+  pinEnc        String
+  lastFour      String
+  updatedAt     DateTime @updatedAt
+}
+
+model Document {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  fileName  String
+  fileUrl   String
+  type      DocType
+  status    DocStatus @default(PENDING)
+  adminNote String?
+  createdAt DateTime  @default(now())
+}
+
+enum DocType {
+  RECEIPT
+  CERTIFICATE
+  OTHER
+}
+
+enum DocStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
