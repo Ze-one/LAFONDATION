@@ -13,7 +13,7 @@ import { DocumentList } from "@/components/admin/document-list";
 export default async function AdminUserDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login");

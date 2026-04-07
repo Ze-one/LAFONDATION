@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/lib/language-context";
+import { LanguageToggle } from "@/components/language-toggle";
+import { ThemeToggle } from "@/components/theme-toggle";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -36,9 +38,18 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <LanguageProvider>
-            {children}
-          </LanguageProvider>
+          <div className="sticky top-0 z-50 border-b border-slate-200/70 bg-background/95 backdrop-blur-sm">
+            <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3">
+              <div className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                LAFONDATION
+              </div>
+              <div className="flex items-center gap-2">
+                <LanguageToggle />
+                <ThemeToggle />
+              </div>
+            </div>
+          </div>
+          <LanguageProvider>{children}</LanguageProvider>
         </ThemeProvider>
         <Toaster />
       </body>

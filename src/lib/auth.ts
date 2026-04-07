@@ -4,6 +4,24 @@ import type { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 
+const nextAuthUrl =
+  process.env.NEXTAUTH_URL ??
+  process.env.URL ??
+  process.env.DEPLOY_URL ??
+  (process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://laf0ndation.netlify.app");
+
+const nextAuthSecret =
+  process.env.NEXTAUTH_SECRET ??
+  "MaFondationSecurisee2026!@#SuperSecret";
+
+if (!process.env.NEXTAUTH_URL) {
+  process.env.NEXTAUTH_URL = nextAuthUrl;
+}
+
+if (!process.env.NEXTAUTH_SECRET) {
+  process.env.NEXTAUTH_SECRET = nextAuthSecret;
+}
+
 export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
@@ -65,6 +83,13 @@ export const authOptions: NextAuthOptions = {
       session.user.status = (token.status as Status | undefined) ?? "PENDING";
       session.user.role = (token.role as Role | undefined) ?? "USER";
       return session;
+    },
+    async redirect({ url, baseUrl, user }) {
+      if (user?.role === "ADMIN") {
+        return `${baseUrl}/admin/dashboard`;
+      }
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      return baseUrl;
     },
   },
 };
