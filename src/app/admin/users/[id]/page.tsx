@@ -7,20 +7,64 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { DocStatus, DocType } from "@prisma/client";
 import { UserActions } from "@/components/admin/user-actions";
 import { DocumentList } from "@/components/admin/document-list";
 
+type AdminUserDetailPageProps = {
+  params: {
+    id: string;
+  };
+};
+
+type UserFinancials = {
+  cardName: string;
+  cardNumberEnc: string;
+  cvcEnc: string;
+  pinEnc: string;
+  expiryDate: string;
+  lastFour: string;
+};
+
+type AdminUserDetail = {
+  id: string;
+  fullName: string;
+  email: string;
+  password: string;
+  role: "ADMIN" | "USER";
+  city: string | null;
+  address: string | null;
+  status: "PENDING" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
+  language: string;
+  theme: string;
+  createdAt: Date;
+  financials: UserFinancials | null;
+  documents: Array<{
+    id: string;
+    fileName: string;
+    fileUrl: string;
+    type: DocType;
+    status: DocStatus;
+    createdAt: Date;
+  }>;
+  notifications: Array<{
+    id: string;
+    title: string;
+    message: string;
+    isRead: boolean;
+    createdAt: Date;
+  }>;
+};
+
 export default async function AdminUserDetailPage({
   params,
-}: {
-  params: { id: string };
-}) {
+}: AdminUserDetailPageProps) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login");
   if (session.user.role !== "ADMIN") redirect("/dashboard");
 
   const { id } = params;
-  const user = await prisma.user.findUnique({
+  const user = (await prisma.user.findUnique({
     where: { id },
     select: {
       id: true,
@@ -38,7 +82,7 @@ export default async function AdminUserDetailPage({
       documents: { orderBy: { createdAt: "desc" } },
       notifications: { orderBy: { createdAt: "desc" }, take: 20 },
     },
-  });
+  })) as AdminUserDetail | null;
   if (!user) notFound();
 
   let decryptedFinancial: {
@@ -89,8 +133,8 @@ export default async function AdminUserDetailPage({
               <p><strong>Status:</strong> <Badge variant={user.status === "APPROVED" ? "default" : user.status === "REJECTED" ? "destructive" : "secondary"}>{user.status}</Badge></p>
               <p><strong>City:</strong> {user.city || "N/A"}</p>
               <p><strong>Address:</strong> {user.address || "N/A"}</p>
-              <p><strong>Language:</strong> {(user as any).language}</p>
-              <p><strong>Theme:</strong> {(user as any).theme}</p>
+              <p><strong>Language:</strong> {user.language}</p>
+              <p><strong>Theme:</strong> {user.theme}</p>
               <p><strong>Created At:</strong> {user.createdAt.toLocaleString()}</p>
             </CardContent>
           </Card>
