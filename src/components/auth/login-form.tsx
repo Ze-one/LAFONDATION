@@ -26,13 +26,13 @@ export function LoginForm() {
     });
     setLoading(false);
 
-    if (result?.error) {
+    if (!result || result.error) {
       setError("Email ou mot de passe invalide.");
       return;
     }
 
-    // Redirect to dashboard; admin users are routed by the server-side dashboard page.
-    await router.push("/dashboard");
+    const destination = result.url ?? "/dashboard";
+    router.push(destination);
   }
 
   return (
