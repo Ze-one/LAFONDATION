@@ -2,5 +2,7 @@
   command = "prisma generate && next build"
   publish = ".next"
 
-[functions]
-  node_version = "20"
+[[redirects]]
+  from = "/api/*"
+  to = "/api/:splat"
+  status = 200

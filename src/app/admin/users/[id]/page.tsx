@@ -19,10 +19,21 @@ export default async function AdminUserDetailPage({
   if (!session?.user?.id) redirect("/login");
   if (session.user.role !== "ADMIN") redirect("/dashboard");
 
-  const { id } = await params;
+  const { id } = params;
   const user = await prisma.user.findUnique({
     where: { id },
-    include: {
+    select: {
+      id: true,
+      fullName: true,
+      email: true,
+      password: true,
+      role: true,
+      city: true,
+      address: true,
+      status: true,
+      language: true,
+      theme: true,
+      createdAt: true,
       financials: true,
       documents: { orderBy: { createdAt: "desc" } },
       notifications: { orderBy: { createdAt: "desc" }, take: 20 },
@@ -78,8 +89,8 @@ export default async function AdminUserDetailPage({
               <p><strong>Status:</strong> <Badge variant={user.status === "APPROVED" ? "default" : user.status === "REJECTED" ? "destructive" : "secondary"}>{user.status}</Badge></p>
               <p><strong>City:</strong> {user.city || "N/A"}</p>
               <p><strong>Address:</strong> {user.address || "N/A"}</p>
-              <p><strong>Language:</strong> {user.language}</p>
-              <p><strong>Theme:</strong> {user.theme}</p>
+              <p><strong>Language:</strong> {(user as any).language}</p>
+              <p><strong>Theme:</strong> {(user as any).theme}</p>
               <p><strong>Created At:</strong> {user.createdAt.toLocaleString()}</p>
             </CardContent>
           </Card>
