@@ -11,12 +11,6 @@ import { DocStatus, DocType } from "@prisma/client";
 import { UserActions } from "@/components/admin/user-actions";
 import { DocumentList } from "@/components/admin/document-list";
 
-type AdminUserDetailPageProps = {
-  params: {
-    id: string;
-  };
-};
-
 type UserFinancials = {
   cardName: string;
   cardNumberEnc: string;
@@ -58,7 +52,11 @@ type AdminUserDetail = {
 
 export default async function AdminUserDetailPage({
   params,
-}: AdminUserDetailPageProps) {
+}: {
+  params: {
+    id: string;
+  };
+}) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login");
   if (session.user.role !== "ADMIN") redirect("/dashboard");
