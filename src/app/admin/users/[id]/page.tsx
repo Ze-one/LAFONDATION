@@ -52,16 +52,12 @@ type AdminUserDetail = {
 
 export default async function AdminUserDetailPage({
   params,
-}: {
-  params: {
-    id: string;
-  };
 }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login");
   if (session.user.role !== "ADMIN") redirect("/dashboard");
 
-  const { id } = params;
+  const { id } = await params;
   const user = (await prisma.user.findUnique({
     where: { id },
     select: {

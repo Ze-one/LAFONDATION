@@ -84,10 +84,7 @@ export const authOptions: NextAuthOptions = {
       session.user.role = (token.role as Role | undefined) ?? "USER";
       return session;
     },
-    async redirect({ url, baseUrl, user }) {
-      if (user?.role === "ADMIN") {
-        return `${baseUrl}/admin/dashboard`;
-      }
+    async redirect({ url, baseUrl }) {
       if (url.startsWith("/")) return `${baseUrl}${url}`;
       return baseUrl;
     },

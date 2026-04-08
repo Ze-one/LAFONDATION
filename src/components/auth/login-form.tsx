@@ -31,11 +31,8 @@ export function LoginForm() {
       return;
     }
 
-    // Get updated session to check role
-    const session = await getSession();
-    const redirectUrl = session?.user?.role === "ADMIN" ? "/admin/dashboard" : "/dashboard";
-    router.push(redirectUrl);
-    router.refresh();
+    // Redirect to dashboard; admin users are routed by the server-side dashboard page.
+    await router.push("/dashboard");
   }
 
   return (
