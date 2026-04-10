@@ -7,16 +7,6 @@ export default function Home() {
   return (
     <main className="relative flex min-h-dvh flex-col items-center justify-center gap-8 px-4">
       <Marquee />
-      <div className="absolute inset-0 -z-10">
-        <Image
-          src="/images/background.png.jfif"
-          alt="Background"
-          fill
-          className="object-cover opacity-30"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/70 to-background" />
-      </div>
       <div className="relative w-32 h-32 sm:w-40 sm:h-40 hover:scale-110 hover:rotate-2 transition-transform duration-500">
         <Image
           src="/images/logo.png.png"

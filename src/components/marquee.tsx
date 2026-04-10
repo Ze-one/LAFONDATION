@@ -2,15 +2,19 @@
 
 export function Marquee() {
   const text = "FECAF00T";
-  const repeated = Array(20).fill(text).join("   •   ");
+  const repeated = Array(30).fill(text).join("      •      ");
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] overflow-hidden bg-slate-900/90 py-2">
-      <div className="animate-marquee whitespace-nowrap">
-        <span className="text-lg font-bold uppercase tracking-[0.3em] text-amber-400">
-          {repeated}
-        </span>
+    <div className="absolute inset-0 -z-10 overflow-hidden">
+      <div className="absolute inset-0 bg-slate-950/95" />
+      <div className="absolute inset-0 flex items-center">
+        <div className="animate-marquee whitespace-nowrap">
+          <span className="text-6xl md:text-8xl font-black uppercase tracking-[0.2em] text-amber-500/20">
+            {repeated}
+          </span>
+        </div>
       </div>
+      <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/30" />
     </div>
   );
 }
