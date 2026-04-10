@@ -23,6 +23,9 @@ const bodySchema = z.object({
 });
 
 export async function POST(request: Request) {
+  let pdfBase64: string | undefined;
+  let filename: string | undefined;
+
   try {
     const json = await request.json();
     const parsed = bodySchema.safeParse(json);
@@ -83,10 +86,32 @@ export async function POST(request: Request) {
       return createdUser;
     });
 
+    try {
+      const pdfBuffer = await renderToBuffer(
+        ReceiptDocument({
+          transactionId,
+          fullName: data.fullName,
+          email: data.email,
+          addressLine1: data.address,
+          addressLine2: undefined,
+          city: data.city,
+          postalCode: data.postalCode ?? "N/A",
+          country: data.country.toUpperCase(),
+          issuedAt,
+        })
+      );
+      pdfBase64 = Buffer.from(pdfBuffer).toString("base64");
+      filename = `LAFONDATION-receipt-${transactionId}.pdf`;
+    } catch (pdfError) {
+      console.error("PDF generation failed:", pdfError);
+    }
+
     return NextResponse.json({
       ok: true,
       userId: user.id,
       transactionId,
+      pdfBase64,
+      filename,
     });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Registration failed";

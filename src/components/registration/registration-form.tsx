@@ -157,11 +157,27 @@ export function RegistrationForm() {
         return;
       }
       toast.success(t("accountCreated"));
+      
+      if (data.pdfBase64 && data.filename) {
+        try {
+          const bytes = Uint8Array.from(atob(data.pdfBase64), (c) => c.charCodeAt(0));
+          const blob = new Blob([bytes], { type: "application/pdf" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = data.filename;
+          a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+        } catch (e) {
+          console.error("PDF download failed:", e);
+        }
+      }
+      
       setForm(initial);
       setStep(0);
       setTimeout(() => {
         window.location.href = "/dashboard";
-      }, 1500);
+      }, 2000);
     } catch (err) {
       console.error("Registration error:", err);
       toast.error(t("networkError"));
