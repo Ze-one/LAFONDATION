@@ -1,13 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 
-export default async function Home() {
-  const session = await getServerSession(authOptions);
-  const isLoggedIn = !!session?.user?.id;
-
+export default function Home() {
   return (
     <main className="relative flex min-h-dvh flex-col items-center justify-center gap-8 px-4">
       <div className="absolute inset-0 -z-10">
@@ -43,9 +38,7 @@ export default async function Home() {
           <Link href="/register">Start registration</Link>
         </Button>
         <Button asChild variant="outline" size="lg">
-          <Link href={isLoggedIn ? "/dashboard" : "/login"}>
-            {isLoggedIn ? "Go to Dashboard" : "Login"}
-          </Link>
+          <Link href="/login">Login</Link>
         </Button>
       </div>
     </main>

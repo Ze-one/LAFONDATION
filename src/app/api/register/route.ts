@@ -48,6 +48,7 @@ export async function POST(request: Request) {
           password: passwordHash,
           city: data.city,
           address: data.address,
+          role: "USER" as any,
         },
       });
 
