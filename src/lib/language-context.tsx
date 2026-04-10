@@ -31,6 +31,8 @@ const translations = {
     submitAndDownload: "Submit & download receipt",
     submitting: "Submitting...",
     uploadDocuments: "Upload Documents",
+    accountCreated: "Account created!",
+    networkError: "Network error. Try again.",
   },
   fr: {
     welcome: "Bienvenue",
@@ -58,6 +60,8 @@ const translations = {
     submitAndDownload: "Soumettre & télécharger le reçu",
     submitting: "Soumission...",
     uploadDocuments: "Déposer les documents",
+    accountCreated: "Compte créé !",
+    networkError: "Erreur réseau. Réessayez.",
   },
 };
 

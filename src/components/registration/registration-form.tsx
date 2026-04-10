@@ -51,14 +51,18 @@ const initial: FormState = {
 };
 
 function downloadPdfBase64(base64: string, filename: string) {
-  const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-  const blob = new Blob([bytes], { type: "application/pdf" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
+  try {
+    const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+    const blob = new Blob([bytes], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("PDF download failed:", err);
+  }
 }
 
 export function RegistrationForm() {
@@ -149,17 +153,20 @@ export function RegistrationForm() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error ?? "Registration failed");
+        toast.error(data.error ?? t("submit") + " failed");
         return;
       }
-      toast.success("Account created. Your receipt is downloading.");
+      toast.success(t("accountCreated"));
       if (data.pdfBase64 && data.filename) {
-        downloadPdfBase64(data.pdfBase64, data.filename);
+        setTimeout(() => {
+          downloadPdfBase64(data.pdfBase64, data.filename);
+        }, 500);
       }
       setForm(initial);
       setStep(0);
-    } catch {
-      toast.error("Network error. Try again.");
+    } catch (err) {
+      console.error("Registration error:", err);
+      toast.error(t("networkError"));
     } finally {
       setSubmitting(false);
     }
