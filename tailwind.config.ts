@@ -46,7 +46,7 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       animation: {
-        marquee: "marquee 25s linear infinite",
+        marquee: "marquee 60s linear infinite",
       },
       keyframes: {
         marquee: {
