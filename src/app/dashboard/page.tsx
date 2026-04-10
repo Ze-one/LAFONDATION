@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { DashboardContent } from "@/components/dashboard/dashboard-content";
-import { DocType, DocStatus } from "@prisma/client";
+import { DocType } from "@prisma/client";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);

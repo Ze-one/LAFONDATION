@@ -50,21 +50,6 @@ const initial: FormState = {
   country: "FR",
 };
 
-function downloadPdfBase64(base64: string, filename: string) {
-  try {
-    const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-    const blob = new Blob([bytes], { type: "application/pdf" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error("PDF download failed:", err);
-  }
-}
-
 export function RegistrationForm() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>(initial);

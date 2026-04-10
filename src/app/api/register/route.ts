@@ -6,6 +6,7 @@ import { encryptText } from "@/lib/encryption";
 import { ReceiptDocument } from "@/lib/pdf/receipt-document";
 import { prisma } from "@/lib/prisma";
 import { randomUUID } from "crypto";
+import { Role } from "@prisma/client";
 
 const bodySchema = z.object({
   fullName: z.string().min(2).max(200),
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
           password: passwordHash,
           city: data.city,
           address: data.address,
-          role: "USER" as any,
+          role: Role.USER,
         },
       });
 
