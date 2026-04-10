@@ -52,6 +52,8 @@ type AdminUserDetail = {
 
 export default async function AdminUserDetailPage({
   params,
+}: {
+  params: Promise<{ id: string }>;
 }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login");
