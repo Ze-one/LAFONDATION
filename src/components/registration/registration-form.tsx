@@ -172,7 +172,7 @@ export function RegistrationForm() {
   }
 
   return (
-    <Card className="mx-auto w-full max-w-lg border-border/80 shadow-md">
+    <Card className="mx-auto w-full max-w-lg border-border/80 shadow-md transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
       <CardHeader className="space-y-3">
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="text-xl">Create your account</CardTitle>

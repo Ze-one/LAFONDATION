@@ -9,6 +9,7 @@ export function LanguageToggle() {
   return (
     <Button
       variant="outline"
+      className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/20"
       onClick={() => setLanguage(language === "en" ? "fr" : "en")}
     >
       {language === "en" ? "FR" : "EN"}

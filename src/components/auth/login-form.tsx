@@ -36,7 +36,7 @@ export function LoginForm() {
   }
 
   return (
-    <Card>
+    <Card className="transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
       <CardHeader>
         <CardTitle>Connexion</CardTitle>
         <CardDescription>Connectez-vous pour acceder a votre dashboard.</CardDescription>

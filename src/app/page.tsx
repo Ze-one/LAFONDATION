@@ -15,7 +15,7 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/70 to-background" />
       </div>
-      <div className="relative w-32 h-32 sm:w-40 sm:h-40">
+      <div className="relative w-32 h-32 sm:w-40 sm:h-40 hover:scale-110 hover:rotate-2 transition-transform duration-500">
         <Image
           src="/images/logo.png.png"
           alt="LAFONDATION Logo"

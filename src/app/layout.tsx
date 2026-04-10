@@ -38,7 +38,7 @@ export default function RootLayout({
           <LanguageProvider>
             <div className="sticky top-0 z-50 border-b border-slate-200/70 bg-background/95 backdrop-blur-sm">
               <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3">
-                <Link href="/" className="relative w-8 h-8">
+                <Link href="/" className="relative w-8 h-8 hover:scale-110 hover:rotate-2 transition-transform duration-500">
                   <Image
                     src="/images/logo.png.png"
                     alt="LAFONDATION"

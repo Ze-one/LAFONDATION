@@ -80,7 +80,7 @@ export function DashboardContent({
         </header>
 
         <div className="grid gap-6">
-          <Card className="border-2 border-blue-500 hover:shadow-lg transition-shadow">
+          <Card className="border-2 border-blue-500 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
             <CardHeader>
               <CardTitle>{t("downloadReceipt")}</CardTitle>
               <CardDescription>
@@ -96,7 +96,7 @@ export function DashboardContent({
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card className="transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
             <CardHeader>
               <CardTitle>Deposez vos documents</CardTitle>
               <CardDescription>

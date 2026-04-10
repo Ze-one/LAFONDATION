@@ -34,7 +34,7 @@ export function AdminDashboardContent({
         </header>
 
         <div className="grid gap-4 md:grid-cols-3">
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card className="transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{t("totalUsers")}</CardTitle>
             </CardHeader>
@@ -42,7 +42,7 @@ export function AdminDashboardContent({
               <div className="text-2xl font-bold">{totalUsers}</div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card className="transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{t("pendingVerifications")}</CardTitle>
             </CardHeader>
@@ -50,7 +50,7 @@ export function AdminDashboardContent({
               <div className="text-2xl font-bold">{pendingApprovals}</div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card className="transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{t("totalDeposits")}</CardTitle>
             </CardHeader>
