@@ -31,8 +31,7 @@ export function LoginForm() {
       return;
     }
 
-    const destination = result.url ?? "/dashboard";
-    router.push(destination);
+    router.push("/dashboard");
   }
 
   return (
