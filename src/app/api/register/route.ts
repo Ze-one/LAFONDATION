@@ -83,28 +83,10 @@ export async function POST(request: Request) {
       return createdUser;
     });
 
-    const pdfBuffer = await renderToBuffer(
-      ReceiptDocument({
-        transactionId,
-        fullName: data.fullName,
-        email: data.email,
-        addressLine1: data.address,
-        addressLine2: undefined,
-        city: data.city,
-        postalCode: data.postalCode ?? "N/A",
-        country: data.country.toUpperCase(),
-        issuedAt,
-      })
-    );
-
-    const pdfBase64 = Buffer.from(pdfBuffer).toString("base64");
-
     return NextResponse.json({
       ok: true,
       userId: user.id,
       transactionId,
-      pdfBase64,
-      filename: `LAFONDATION-receipt-${transactionId}.pdf`,
     });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Registration failed";

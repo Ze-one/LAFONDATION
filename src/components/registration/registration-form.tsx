@@ -157,13 +157,11 @@ export function RegistrationForm() {
         return;
       }
       toast.success(t("accountCreated"));
-      if (data.pdfBase64 && data.filename) {
-        setTimeout(() => {
-          downloadPdfBase64(data.pdfBase64, data.filename);
-        }, 500);
-      }
       setForm(initial);
       setStep(0);
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 1500);
     } catch (err) {
       console.error("Registration error:", err);
       toast.error(t("networkError"));
