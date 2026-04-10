@@ -11,7 +11,7 @@ export function LanguageToggle() {
       variant="outline"
       onClick={() => setLanguage(language === "en" ? "fr" : "en")}
     >
-      {language === "en" ? "🇫🇷 Français" : "🇬🇧 English"}
+      {language === "en" ? "FR" : "EN"}
     </Button>
   );
 }

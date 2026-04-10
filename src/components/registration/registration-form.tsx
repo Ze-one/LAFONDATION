@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/language-context";
 
 const STEPS = ["Identity", "Location", "Bank Info"] as const;
 
@@ -64,6 +65,7 @@ export function RegistrationForm() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>(initial);
   const [submitting, setSubmitting] = useState(false);
+  const { t } = useLanguage();
 
   const progress = useMemo(
     () => Math.round(((step + 1) / STEPS.length) * 100),
@@ -369,7 +371,7 @@ export function RegistrationForm() {
             </Button>
           ) : (
             <Button type="button" disabled={submitting} onClick={onSubmit}>
-              {submitting ? "Submitting…" : "Submit & download receipt"}
+              {submitting ? t("submitting") : t("submitAndDownload")}
             </Button>
           )}
         </div>

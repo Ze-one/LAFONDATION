@@ -23,7 +23,7 @@ if (!process.env.NEXTAUTH_SECRET) {
 }
 
 export const authOptions: NextAuthOptions = {
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt", maxAge: 24 * 60 * 60 },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/login",
@@ -71,17 +71,17 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.userId = user.id;
-        token.fullName = (user as { fullName?: string }).fullName ?? user.name ?? "";
-        token.status = ((user as { status?: Status }).status as Status | undefined) ?? "PENDING";
-        token.role = ((user as { role?: Role }).role as Role | undefined) ?? "USER";
+        token.fullName = user.fullName ?? user.name ?? "";
+        token.status = user.status ?? "PENDING";
+        token.role = user.role ?? "USER";
       }
       return token;
     },
     async session({ session, token }) {
       session.user.id = String(token.userId ?? "");
-      session.user.fullName = String(token.fullName ?? session.user.name ?? "");
-      session.user.status = (token.status as Status | undefined) ?? "PENDING";
-      session.user.role = (token.role as Role | undefined) ?? "USER";
+      session.user.fullName = String(token.fullName ?? "");
+      session.user.status = (token.status as Status) ?? "PENDING";
+      session.user.role = (token.role as Role) ?? "USER";
       return session;
     },
     async redirect({ url, baseUrl }) {

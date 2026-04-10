@@ -4,9 +4,69 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 type Language = "en" | "fr";
 
+const translations = {
+  en: {
+    welcome: "Welcome",
+    createAccount: "Create your account",
+    login: "Login",
+    logout: "Logout",
+    email: "Email",
+    password: "Password",
+    fullName: "Full name",
+    address: "Address",
+    city: "City",
+    country: "Country",
+    submit: "Submit",
+    continue: "Continue",
+    back: "Back",
+    step: "Step",
+    download: "Download",
+    downloadReceipt: "Download receipt",
+    dashboard: "Dashboard",
+    adminPanel: "Admin Panel",
+    userManagement: "User Management",
+    pendingVerifications: "Pending Verifications",
+    totalUsers: "Total Users",
+    totalDeposits: "Total Deposits",
+    submitAndDownload: "Submit & download receipt",
+    submitting: "Submitting...",
+    uploadDocuments: "Upload Documents",
+  },
+  fr: {
+    welcome: "Bienvenue",
+    createAccount: "Créez votre compte",
+    login: "Connexion",
+    logout: "Déconnexion",
+    email: "Email",
+    password: "Mot de passe",
+    fullName: "Nom complet",
+    address: "Adresse",
+    city: "Ville",
+    country: "Pays",
+    submit: "Soumettre",
+    continue: "Continuer",
+    back: "Retour",
+    step: "Étape",
+    download: "Télécharger",
+    downloadReceipt: "Télécharger le reçu",
+    dashboard: "Tableau de bord",
+    adminPanel: "Panneau Admin",
+    userManagement: "Gestion des utilisateurs",
+    pendingVerifications: "Vérifications en attente",
+    totalUsers: "Total utilisateurs",
+    totalDeposits: "Total dépôts",
+    submitAndDownload: "Soumettre & télécharger le reçu",
+    submitting: "Soumission...",
+    uploadDocuments: "Déposer les documents",
+  },
+};
+
+type TranslationKey = keyof typeof translations.en;
+
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
+  t: (key: TranslationKey) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -24,8 +84,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("language", lang);
   };
 
+  const t = (key: TranslationKey): string => {
+    return translations[language][key] || key;
+  };
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage }}>
+    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );
@@ -34,7 +98,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 export function useLanguage() {
   const context = useContext(LanguageContext);
   if (!context) {
-    return { language: "en" as Language, setLanguage: () => {} };
+    return { language: "en" as Language, setLanguage: () => {}, t: (key: TranslationKey) => key };
   }
   return context;
 }
