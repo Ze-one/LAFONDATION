@@ -35,7 +35,7 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
+    <Card className="bg-white/5 backdrop-blur-lg border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] transition-all duration-300 ease-in-out hover:-translate-y-2 hover:border-blue-500/50 hover:shadow-blue-500/20">
       <CardHeader>
         <CardTitle>Connexion</CardTitle>
         <CardDescription>Connectez-vous pour acceder a votre dashboard.</CardDescription>

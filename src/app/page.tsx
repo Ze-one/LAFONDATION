@@ -6,16 +6,6 @@ import { Marquee } from "@/components/marquee";
 export default function Home() {
   return (
     <main className="relative flex min-h-dvh flex-col items-center justify-center gap-8 px-4">
-      <div className="absolute inset-0 -z-10">
-        <Image
-          src="/images/background.png.jfif"
-          alt="Background"
-          fill
-          className="object-cover opacity-30"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/70 to-background" />
-      </div>
       <Marquee />
       <div className="relative w-32 h-32 sm:w-40 sm:h-40 hover:scale-110 hover:rotate-2 transition-transform duration-500">
         <Image
@@ -27,10 +17,13 @@ export default function Home() {
         />
       </div>
       <div className="text-center">
-        <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-400">
           FECAF00T
         </p>
-        <p className="mt-3 max-w-md text-muted-foreground">
+        <h1 className="mt-2 text-4xl font-semibold tracking-tight sm:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+          LAFONDATION
+        </h1>
+        <p className="mt-3 max-w-md text-slate-400">
           Register, receive your receipt, and complete onboarding from your
           dashboard.
         </p>
