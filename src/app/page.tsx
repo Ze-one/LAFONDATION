@@ -1,12 +1,19 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Marquee } from "@/components/marquee";
 
 export default function Home() {
   return (
     <main className="relative flex min-h-dvh flex-col items-center justify-center gap-8 px-4">
-      <Marquee />
+      <div className="fixed inset-0 -z-10">
+        <Image
+          src="/images/background.png"
+          alt="Background"
+          fill
+          className="object-cover opacity-60"
+          priority
+        />
+      </div>
       <div className="relative w-32 h-32 sm:w-40 sm:h-40 hover:scale-110 hover:rotate-2 transition-transform duration-500">
         <Image
           src="/images/logo.png.png"

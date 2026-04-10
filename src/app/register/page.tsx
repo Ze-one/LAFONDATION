@@ -1,10 +1,18 @@
 import { RegistrationForm } from "@/components/registration/registration-form";
-import { Marquee } from "@/components/marquee";
+import Image from "next/image";
 
 export default function RegisterPage() {
   return (
     <main className="relative min-h-dvh px-4 py-10 sm:py-16">
-      <Marquee />
+      <div className="fixed inset-0 -z-10">
+        <Image
+          src="/images/background.png"
+          alt="Background"
+          fill
+          className="object-cover opacity-60"
+          priority
+        />
+      </div>
       <div className="mx-auto max-w-xl space-y-6">
         <header className="text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
