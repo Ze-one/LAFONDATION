@@ -1,9 +1,11 @@
 import { RegistrationForm } from "@/components/registration/registration-form";
 import Image from "next/image";
+import { Marquee } from "@/components/marquee";
 
 export default function RegisterPage() {
   return (
     <main className="relative min-h-dvh px-4 py-10 sm:py-16">
+      <Marquee />
       <div className="absolute inset-0 -z-10">
         <Image
           src="/images/background.png.jfif"

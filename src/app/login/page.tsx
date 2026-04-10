@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { LoginForm } from "@/components/auth/login-form";
 import Image from "next/image";
+import { Marquee } from "@/components/marquee";
 
 export default async function LoginPage() {
   const session = await getServerSession(authOptions);
@@ -12,6 +13,7 @@ export default async function LoginPage() {
 
   return (
     <main className="relative min-h-dvh px-4 py-10 sm:py-16">
+      <Marquee />
       <div className="absolute inset-0 -z-10">
         <Image
           src="/images/background.png.jfif"

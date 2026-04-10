@@ -1,10 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Marquee } from "@/components/marquee";
 
 export default function Home() {
   return (
     <main className="relative flex min-h-dvh flex-col items-center justify-center gap-8 px-4">
+      <Marquee />
       <div className="absolute inset-0 -z-10">
         <Image
           src="/images/background.png.jfif"
