@@ -4,8 +4,8 @@ import { useLanguage } from "@/lib/language-context";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { UploadCenter } from "./upload-center";
-import { LogoutButton } from "./logout-button";
 import { NotificationCenter } from "./notification-center";
+import { ProfileMenu } from "@/components/profile-menu";
 import { Status, DocStatus } from "@prisma/client";
 
 interface UserDoc {
@@ -30,6 +30,7 @@ interface User {
   fullName: string;
   email: string;
   status: Status;
+  role: string;
   city: string | null;
   address: string | null;
   language: string;
@@ -75,7 +76,7 @@ export function DashboardContent({
                 }))}
               />
             </div>
-            <LogoutButton />
+            <ProfileMenu userName={user.fullName} userRole={user.role} />
           </div>
         </header>
 
