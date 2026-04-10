@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/lib/language-context";
@@ -36,9 +38,14 @@ export default function RootLayout({
           <LanguageProvider>
             <div className="sticky top-0 z-50 border-b border-slate-200/70 bg-background/95 backdrop-blur-sm">
               <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3">
-                <div className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  LAFONDATION
-                </div>
+                <Link href="/" className="relative w-8 h-8">
+                  <Image
+                    src="/images/logo.png.png"
+                    alt="LAFONDATION"
+                    fill
+                    className="object-contain"
+                  />
+                </Link>
                 <div className="flex items-center gap-2">
                   <LanguageToggle />
                   <ThemeToggle />
