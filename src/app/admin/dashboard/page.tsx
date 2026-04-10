@@ -2,8 +2,6 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { UserTable } from "@/components/admin/user-table";
 import { AdminDashboardContent } from "@/components/admin/admin-dashboard-content";
 
 export default async function AdminDashboardPage() {

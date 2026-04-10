@@ -6,6 +6,44 @@ import { Button } from "@/components/ui/button";
 import { UploadCenter } from "./upload-center";
 import { LogoutButton } from "./logout-button";
 import { NotificationCenter } from "./notification-center";
+import { Status, DocStatus } from "@prisma/client";
+
+interface UserDoc {
+  id: string;
+  fileName: string;
+  fileUrl: string;
+  type: string;
+  status: DocStatus;
+  createdAt: Date;
+}
+
+interface UserNotification {
+  id: string;
+  title: string;
+  message: string;
+  isRead: boolean;
+  createdAt: Date;
+}
+
+interface User {
+  id: string;
+  fullName: string;
+  email: string;
+  status: Status;
+  city: string | null;
+  address: string | null;
+  language: string;
+  theme: string;
+  createdAt: Date;
+  documents: UserDoc[];
+  notifications: UserNotification[];
+}
+
+interface OtherDoc {
+  id: string;
+  label: string;
+  status: DocStatus;
+}
 
 export function DashboardContent({ 
   user, 
@@ -13,10 +51,10 @@ export function DashboardContent({
   signedReceipt, 
   certificate 
 }: { 
-  user: any; 
-  otherDocs: any[]; 
-  signedReceipt: any; 
-  certificate: any;
+  user: User; 
+  otherDocs: OtherDoc[]; 
+  signedReceipt: OtherDoc | null; 
+  certificate: OtherDoc | null;
 }) {
   const { t } = useLanguage();
   
@@ -29,7 +67,7 @@ export function DashboardContent({
               <h1 className="text-2xl font-bold">{t("welcome")}, {user.fullName} 👋</h1>
               <NotificationCenter
                 initialStatus={user.status}
-                initialNotifications={user.notifications.map((n: any) => ({
+                initialNotifications={user.notifications.map((n) => ({
                   id: n.id,
                   title: n.title,
                   message: n.message,
@@ -69,9 +107,9 @@ export function DashboardContent({
               <UploadCenter
                 signedReceiptStatus={signedReceipt?.status ?? "PENDING"}
                 certificateStatus={certificate?.status ?? "PENDING"}
-                otherDocs={otherDocs.map((doc: any) => ({
+                otherDocs={otherDocs.map((doc) => ({
                   id: doc.id,
-                  label: doc.fileName,
+                  label: doc.label,
                   status: doc.status,
                 }))}
               />

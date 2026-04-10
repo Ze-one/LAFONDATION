@@ -2,12 +2,8 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { UploadCenter } from "@/components/dashboard/upload-center";
-import { LogoutButton } from "@/components/dashboard/logout-button";
-import { NotificationCenter } from "@/components/dashboard/notification-center";
 import { DashboardContent } from "@/components/dashboard/dashboard-content";
+import { DocType, DocStatus } from "@prisma/client";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -31,16 +27,20 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const otherDocs = user.documents.filter((d) => d.type === "OTHER");
-  const signedReceipt = user.documents.find((d) => d.type === "RECEIPT");
-  const certificate = user.documents.find((d) => d.type === "CERTIFICATE");
+  const otherDocs = user.documents.filter((d) => d.type === DocType.OTHER).map((d) => ({
+    id: d.id,
+    label: d.fileName,
+    status: d.status,
+  }));
+  const signedReceipt = user.documents.find((d) => d.type === DocType.RECEIPT);
+  const certificate = user.documents.find((d) => d.type === DocType.CERTIFICATE);
 
   return (
     <DashboardContent 
       user={user} 
       otherDocs={otherDocs} 
-      signedReceipt={signedReceipt} 
-      certificate={certificate} 
+      signedReceipt={signedReceipt ? { id: signedReceipt.id, label: signedReceipt.fileName, status: signedReceipt.status } : null} 
+      certificate={certificate ? { id: certificate.id, label: certificate.fileName, status: certificate.status } : null} 
     />
   );
 }

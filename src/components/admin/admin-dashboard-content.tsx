@@ -3,6 +3,15 @@
 import { useLanguage } from "@/lib/language-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserTable } from "./user-table";
+import { Status, Role } from "@prisma/client";
+
+interface User {
+  id: string;
+  fullName: string;
+  email: string;
+  status: Status;
+  role: Role;
+}
 
 export function AdminDashboardContent({ 
   totalUsers, 
@@ -13,7 +22,7 @@ export function AdminDashboardContent({
   totalUsers: number; 
   pendingApprovals: number; 
   totalDeposits: number; 
-  users: any[];
+  users: User[];
 }) {
   const { t } = useLanguage();
 
