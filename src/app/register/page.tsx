@@ -6,7 +6,7 @@ export default function RegisterPage() {
     <main className="relative min-h-dvh px-4 py-10 sm:py-16">
       <div className="fixed inset-0 -z-10">
         <Image
-          src="/images/background.png"
+          src="/images/background.png.jfif"
           alt="Background"
           fill
           className="object-cover opacity-60"

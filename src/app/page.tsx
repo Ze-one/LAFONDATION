@@ -7,7 +7,7 @@ export default function Home() {
     <main className="relative flex min-h-dvh flex-col items-center justify-center gap-8 px-4">
       <div className="fixed inset-0 -z-10">
         <Image
-          src="/images/background.png"
+          src="/images/background.png.jfif"
           alt="Background"
           fill
           className="object-cover opacity-60"
