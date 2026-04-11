@@ -2,7 +2,6 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { LoginForm } from "@/components/auth/login-form";
-import Image from "next/image";
 
 export default async function LoginPage() {
   const session = await getServerSession(authOptions);
@@ -11,17 +10,9 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="relative min-h-dvh px-4 py-10 sm:py-16">
-      <div className="fixed inset-0 -z-10">
-        <Image
-          src="/images/background.png.jfif"
-          alt="Background"
-          fill
-          className="object-cover opacity-60"
-          priority
-        />
-      </div>
-      <div className="mx-auto max-w-md">
+    <main className="relative min-h-dvh px-4 py-10 sm:py-16" style={{ backgroundImage: 'url(/images/background.png.jfif)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
+      <div className="absolute inset-0 bg-black/40" />
+      <div className="mx-auto max-w-md z-10">
         <LoginForm />
       </div>
     </main>
