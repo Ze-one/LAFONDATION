@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { AdminDashboardContent } from "@/components/admin/admin-dashboard-content";
+import { ChatWrapper } from "@/components/chat/chat-wrapper";
 
 export default async function AdminDashboardPage() {
   const session = await getServerSession(authOptions);
@@ -29,11 +30,14 @@ export default async function AdminDashboardPage() {
   ]);
 
   return (
-    <AdminDashboardContent 
-      totalUsers={totalUsers} 
-      pendingApprovals={pendingApprovals} 
-      totalDeposits={totalDeposits} 
-      users={users} 
-    />
+    <>
+      <AdminDashboardContent 
+        totalUsers={totalUsers} 
+        pendingApprovals={pendingApprovals} 
+        totalDeposits={totalDeposits} 
+        users={users} 
+      />
+      <ChatWrapper userId={session.user.id} userRole={session.user.role} />
+    </>
   );
 }

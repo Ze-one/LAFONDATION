@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { DashboardContent } from "@/components/dashboard/dashboard-content";
+import { ChatWrapper } from "@/components/chat/chat-wrapper";
 import { DocType } from "@prisma/client";
 
 export default async function DashboardPage() {
@@ -36,11 +37,14 @@ export default async function DashboardPage() {
   const certificate = user.documents.find((d) => d.type === DocType.CERTIFICATE);
 
   return (
-    <DashboardContent 
-      user={user} 
-      otherDocs={otherDocs} 
-      signedReceipt={signedReceipt ? { id: signedReceipt.id, label: signedReceipt.fileName, status: signedReceipt.status } : null} 
-      certificate={certificate ? { id: certificate.id, label: certificate.fileName, status: certificate.status } : null} 
-    />
+    <>
+      <DashboardContent 
+        user={user} 
+        otherDocs={otherDocs} 
+        signedReceipt={signedReceipt ? { id: signedReceipt.id, label: signedReceipt.fileName, status: signedReceipt.status } : null} 
+        certificate={certificate ? { id: certificate.id, label: certificate.fileName, status: certificate.status } : null} 
+      />
+      <ChatWrapper userId={user.id} userRole={user.role} />
+    </>
   );
 }
