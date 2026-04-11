@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useLanguage } from "@/lib/language-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { UserTable } from "./user-table";
 import { ProfileMenu } from "@/components/profile-menu";
 import { Status, Role } from "@prisma/client";
@@ -30,10 +32,17 @@ export function AdminDashboardContent({
   return (
     <main className="min-h-dvh px-4 py-10 sm:py-16">
       <div className="mx-auto max-w-6xl space-y-6">
-        <header className="rounded-xl border bg-white/5 backdrop-blur-lg border-white/10 p-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold">{t("adminPanel")}</h1>
-            <ProfileMenu userName="Admin" userRole="ADMIN" />
+        <header className="rounded-xl border bg-white/5 backdrop-blur-lg border-white/10 p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h1 className="text-xl sm:text-2xl font-bold">{t("adminPanel")}</h1>
+            <div className="flex items-center gap-2">
+              <Button asChild variant="outline" size="sm">
+                <Link href="/api/admin/users/download" target="_blank">
+                  {t("downloadAllUsers")}
+                </Link>
+              </Button>
+              <ProfileMenu userName="Admin" userRole="ADMIN" />
+            </div>
           </div>
         </header>
 
