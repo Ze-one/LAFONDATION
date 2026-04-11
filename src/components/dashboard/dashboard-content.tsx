@@ -85,7 +85,7 @@ export function DashboardContent({
             <CardHeader>
               <CardTitle>{t("downloadReceipt")}</CardTitle>
               <CardDescription>
-                Genere un PDF avec vos informations d&apos;inscription.
+                {t("generatePdfInfo")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -99,9 +99,9 @@ export function DashboardContent({
 
           <Card className="transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
             <CardHeader>
-              <CardTitle>Deposez vos documents</CardTitle>
+              <CardTitle>{t("uploadDocumentsTitle")}</CardTitle>
               <CardDescription>
-                Recu signe, certificat et autres documents demandes par l&apos;admin.
+                {t("uploadDocumentsDesc")}
               </CardDescription>
             </CardHeader>
             <CardContent>

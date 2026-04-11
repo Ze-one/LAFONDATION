@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { DocStatus } from "@prisma/client";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/lib/language-context";
 
 type OtherDoc = {
   id: string;
@@ -17,14 +18,14 @@ type UploadCenterProps = {
   otherDocs: OtherDoc[];
 };
 
-function statusLabel(status: DocStatus) {
+function getStatusLabel(status: DocStatus, pendingLabel: string, verifiedLabel: string, rejectedLabel: string) {
   switch (status) {
     case "PENDING":
-      return "En attente";
+      return pendingLabel;
     case "VERIFIED":
-      return "Valide";
+      return verifiedLabel;
     case "REJECTED":
-      return "Rejete";
+      return rejectedLabel;
     default:
       return status;
   }
@@ -41,6 +42,7 @@ function DocumentRow({
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
 
   async function uploadFile(file: File | null) {
     if (!file) return;
@@ -58,7 +60,7 @@ function DocumentRow({
     <div className="flex flex-col gap-2 rounded-md border p-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <p className="font-medium">{label}</p>
-        <p className="text-sm text-muted-foreground">Statut: {statusLabel(status)}</p>
+        <p className="text-sm text-muted-foreground">{t("status")}: {getStatusLabel(status, t("pending"), t("verified"), t("rejected"))}</p>
       </div>
       <label className="inline-flex cursor-pointer">
         <input
@@ -68,7 +70,7 @@ function DocumentRow({
           disabled={loading}
         />
         <span className="inline-flex h-10 items-center justify-center rounded-md border px-4 text-sm font-medium">
-          {loading ? "Upload..." : "Upload"}
+          {loading ? t("uploading") : t("upload")}
         </span>
       </label>
     </div>
@@ -76,20 +78,22 @@ function DocumentRow({
 }
 
 export function UploadCenter({ signedReceiptStatus, certificateStatus, otherDocs }: UploadCenterProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="space-y-4">
-      <DocumentRow label="Recu LAFONDATION signe" status={signedReceiptStatus} type="RECEIPT" />
+      <DocumentRow label={t("signedReceipt")} status={signedReceiptStatus} type="RECEIPT" />
       <DocumentRow
-        label="Certificat d'enregistrement"
+        label={t("certificate")}
         status={certificateStatus}
         type="CERTIFICATE"
       />
 
       <div className="space-y-2">
-        <p className="text-sm font-semibold">Autres documents (Admin)</p>
+        <p className="text-sm font-semibold">{t("otherDocuments")}</p>
         {otherDocs.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            Aucun document additionnel demande pour le moment.
+            {t("noAdditionalDocs")}
           </p>
         ) : (
           <div className="space-y-3">
@@ -101,11 +105,11 @@ export function UploadCenter({ signedReceiptStatus, certificateStatus, otherDocs
       </div>
 
       <div className="pt-2">
-        <p className="mb-2 text-sm text-muted-foreground">Ajouter un autre document</p>
-        <DocumentRow label="Autre document" status="PENDING" type="OTHER" />
+        <p className="mb-2 text-sm text-muted-foreground">{t("addAnotherDoc")}</p>
+        <DocumentRow label={t("otherDocument")} status="PENDING" type="OTHER" />
       </div>
       <Button variant="ghost" className="w-full" disabled>
-        Le stockage cloud peut etre branche ensuite (S3/Uploadthing).
+        {t("cloudStorageNote")}
       </Button>
     </div>
   );

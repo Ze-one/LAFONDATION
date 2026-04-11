@@ -18,7 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/language-context";
 
-const STEPS = ["Identity", "Location", "Bank Info"] as const;
+const STEPS = ["stepIdentity", "stepLocation", "stepBankInfo"] as const;
 
 type FormState = {
   fullName: string;
@@ -68,47 +68,47 @@ export function RegistrationForm() {
   function validateStep(s: number): boolean {
     if (s === 0) {
       if (form.fullName.trim().length < 2) {
-        toast.error("Please enter your full name.");
+        toast.error(t("errorFullName"));
         return false;
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-        toast.error("Please enter a valid email.");
+        toast.error(t("errorEmail"));
         return false;
       }
       if (form.password.length < 8) {
-        toast.error("Password must be at least 8 characters.");
+        toast.error(t("errorPassword"));
         return false;
       }
     }
     if (s === 1) {
       if (!form.address.trim() || !form.city.trim()) {
-        toast.error("Complete your location details.");
+        toast.error(t("errorCompleteAddress"));
         return false;
       }
       if (form.country.trim().length !== 2) {
-        toast.error("Use a 2-letter country code (e.g. FR).");
+        toast.error(t("errorCountryCode"));
         return false;
       }
     }
     if (s === 2) {
       if (form.cardNumber.replace(/\s/g, "").length < 12) {
-        toast.error("Check the card number.");
+        toast.error(t("errorCardNumber"));
         return false;
       }
       if (form.nameOnCard.trim().length < 2) {
-        toast.error("Enter the name on card.");
+        toast.error(t("errorNameOnCard"));
         return false;
       }
       if (form.cvc.length < 3) {
-        toast.error("Enter a valid CVC.");
+        toast.error(t("errorCVC"));
         return false;
       }
       if (form.expiry.trim().length < 4) {
-        toast.error("Enter expiry (MM/YY).");
+        toast.error(t("errorExpiry"));
         return false;
       }
       if (form.accountPin.length < 4) {
-        toast.error("PIN must be at least 4 characters.");
+        toast.error(t("errorPIN"));
         return false;
       }
     }
@@ -175,20 +175,19 @@ export function RegistrationForm() {
     <Card className="mx-auto w-full max-w-lg bg-white/5 backdrop-blur-lg border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] transition-all duration-300 ease-in-out hover:-translate-y-2 hover:border-blue-500/50 hover:shadow-blue-500/20">
       <CardHeader className="space-y-3">
         <div className="flex items-center justify-between gap-2">
-          <CardTitle className="text-xl">Create your account</CardTitle>
+          <CardTitle className="text-xl">{t("createAccount")}</CardTitle>
           <span className="text-xs text-muted-foreground">
-            Step {step + 1} / {STEPS.length}
+            {t("step")} {step + 1} / {STEPS.length}
           </span>
         </div>
         <CardDescription>
-          {STEPS[step]} — data in transit is protected with HTTPS; financial
-          fields are encrypted before storage.
+          {t(STEPS[step])} — {t("dataInTransitProtected")}
         </CardDescription>
         <Progress value={progress} className="h-1.5" />
         <div className="flex flex-wrap gap-1.5">
-          {STEPS.map((label, i) => (
+          {STEPS.map((labelKey, i) => (
             <button
-              key={label}
+              key={labelKey}
               type="button"
               onClick={() => i < step && setStep(i)}
               className={cn(
@@ -200,7 +199,7 @@ export function RegistrationForm() {
                     : "bg-secondary text-secondary-foreground/70"
               )}
             >
-              {label}
+              {t(labelKey)}
             </button>
           ))}
         </div>
@@ -217,7 +216,7 @@ export function RegistrationForm() {
             {step === 0 && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Full name</Label>
+                  <Label htmlFor="fullName">{t("fullName")}</Label>
                   <Input
                     id="fullName"
                     autoComplete="name"
@@ -226,7 +225,7 @@ export function RegistrationForm() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t("email")}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -236,7 +235,7 @@ export function RegistrationForm() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t("password")}</Label>
                   <Input
                     id="password"
                     type="password"
@@ -251,7 +250,7 @@ export function RegistrationForm() {
             {step === 1 && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="address">Address</Label>
+                  <Label htmlFor="address">{t("address")}</Label>
                   <Input
                     id="address"
                     autoComplete="street-address"
@@ -261,7 +260,7 @@ export function RegistrationForm() {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
-                    <Label htmlFor="postalCode">Postal code (optional)</Label>
+                    <Label htmlFor="postalCode">{t("postalCode")}</Label>
                     <Input
                       id="postalCode"
                       autoComplete="postal-code"
@@ -270,7 +269,7 @@ export function RegistrationForm() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="city">City</Label>
+                    <Label htmlFor="city">{t("city")}</Label>
                     <Input
                       id="city"
                       autoComplete="address-level2"
@@ -280,7 +279,7 @@ export function RegistrationForm() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="country">Country (ISO-2)</Label>
+                  <Label htmlFor="country">{t("country")} (ISO-2)</Label>
                   <Input
                     id="country"
                     maxLength={2}
@@ -297,11 +296,10 @@ export function RegistrationForm() {
             {step === 2 && (
               <div className="space-y-4">
                 <p className="rounded-lg border border-amber-200/80 bg-amber-50 px-3 py-2 text-xs text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-100">
-                  Production systems should tokenize card data (PCI DSS). This
-                  demo encrypts at rest only.
+                  {t("pciWarning")}
                 </p>
                 <div className="space-y-2">
-                  <Label htmlFor="cardNumber">Card number</Label>
+                  <Label htmlFor="cardNumber">{t("cardNumber")}</Label>
                   <Input
                     id="cardNumber"
                     inputMode="numeric"
@@ -311,7 +309,7 @@ export function RegistrationForm() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="nameOnCard">Name on card</Label>
+                  <Label htmlFor="nameOnCard">{t("nameOnCard")}</Label>
                   <Input
                     id="nameOnCard"
                     autoComplete="cc-name"
@@ -321,7 +319,7 @@ export function RegistrationForm() {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
-                    <Label htmlFor="expiry">Expiry</Label>
+                    <Label htmlFor="expiry">{t("expiry")}</Label>
                     <Input
                       id="expiry"
                       placeholder="MM/YY"
@@ -331,7 +329,7 @@ export function RegistrationForm() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="cvc">CVC</Label>
+                    <Label htmlFor="cvc">{t("cvc")}</Label>
                     <Input
                       id="cvc"
                       inputMode="numeric"
@@ -342,7 +340,7 @@ export function RegistrationForm() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="accountPin">Account PIN</Label>
+                  <Label htmlFor="accountPin">{t("accountPin")}</Label>
                   <Input
                     id="accountPin"
                     type="password"
@@ -375,7 +373,7 @@ export function RegistrationForm() {
                 if (validateStep(step)) setStep((s) => s + 1);
               }}
             >
-              Continue
+              {t("continue")}
             </Button>
           ) : (
             <Button type="button" disabled={submitting} onClick={onSubmit}>
@@ -386,7 +384,7 @@ export function RegistrationForm() {
 
         <p className="text-center text-xs text-muted-foreground">
           <Link href="/" className="underline underline-offset-4">
-            Back to home
+            {t("backToHome")}
           </Link>
         </p>
       </CardContent>
