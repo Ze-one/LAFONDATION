@@ -10,8 +10,7 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="relative min-h-dvh px-4 py-10 sm:py-16" style={{ backgroundImage: 'url(/images/background.png.jfif)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
-      <div className="absolute inset-0 bg-black/40" />
+    <main className="relative min-h-dvh px-4 py-10 sm:py-16">
       <div className="mx-auto max-w-md z-10">
         <LoginForm />
       </div>

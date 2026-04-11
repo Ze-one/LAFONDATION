@@ -33,6 +33,10 @@ const translations = {
     uploadDocuments: "Upload Documents",
     accountCreated: "Account created!",
     networkError: "Network error. Try again.",
+    startRegistration: "Start registration",
+    register: "Register",
+    onboarding: "Onboarding",
+    tagline: "Register, receive your receipt, and complete onboarding from your dashboard.",
   },
   fr: {
     welcome: "Bienvenue",
@@ -62,6 +66,10 @@ const translations = {
     uploadDocuments: "Déposer les documents",
     accountCreated: "Compte créé !",
     networkError: "Erreur réseau. Réessayez.",
+    startRegistration: "Commencer l'inscription",
+    register: "S'inscrire",
+    onboarding: "Inscription",
+    tagline: "Inscrivez-vous, recevez votre reçu et complétez votre inscription depuis votre tableau de bord.",
   },
 };
 
