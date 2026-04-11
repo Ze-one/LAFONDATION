@@ -33,48 +33,9 @@ export default function Home() {
       </div>
 
       <div className="grid gap-4 sm:gap-6 z-10 w-full max-w-3xl px-2">
-        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 sm:p-6 text-center sm:text-left">
-          <h2 className="text-lg sm:text-xl font-bold text-white mb-2">{t("ourMission")}</h2>
-          <p className="text-sm sm:text-base text-slate-300">
-            La Fondation Privada Samuel Eto&apos;o, créée en mars 2006, est une organisation à but non lucratif dédiée à la protection des enfants et des jeunes défavorisés. Nous fournissons une aide d&apos;urgence, favorisons l&apos;éducation et la santé, et soutenons l&apos;insertion sociale des plus vulnérables pour leur offrir un avenir plus prometteur.
-          </p>
-        </div>
-
-        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 sm:p-6 text-center sm:text-left">
-          <h2 className="text-lg sm:text-xl font-bold text-white mb-2">{t("entrepreneurship")}</h2>
-          <p className="text-sm sm:text-base text-slate-300">
-            Parce que la charité ne suffit pas à développer un continent, la fondation mise sur l&apos;autonomie. Nous offrons un programme de soutien aux porteurs de projets et start-ups locales avec capital d&apos;amorçage, mentorat par des experts, et soutien aux projets numériques innovants pour un développement économique durable.
-          </p>
-        </div>
-
-        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 sm:p-6 text-center sm:text-left">
-          <h2 className="text-lg sm:text-xl font-bold text-white mb-2">Fundesport - Académie de Football</h2>
-          <p className="text-sm sm:text-base text-slate-300">
-            Déclarée d&apos;utilité publique le 1er avril 2023 par le Président de la République du Cameroun, Fundesport comprend quatre centres de formation au Cameroun (Douala, Yaoundé, Limbé, Bamenda) et un au Gabon (Libreville). Notre objectif est d&apos;offrir les meilleures opportunités aux jeunes athlètes africains en utilisant le football comme moyen de développement économique, culturel et social.
-          </p>
-        </div>
-
-        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 sm:p-6 text-center sm:text-left">
-          <h2 className="text-lg sm:text-xl font-bold text-white mb-2">{t("objectives")}</h2>
-          <ul className="text-sm sm:text-base text-slate-300 space-y-2 list-disc list-inside">
-            <li>Construire des écoles, centres de santé et infrastructures sportives</li>
-            <li>Offrir des bourses d&apos;études et formations professionnelles</li>
-            <li>Organiser des camps de football et activités récréatives</li>
-            <li>Soutenir les familles vulnérables et personnes âgées</li>
-            <li>Attribuer 80 bourses annuelles aux étudiants talentueux</li>
-            <li>Contribution à la distribution de matériel informatique</li>
-          </ul>
-        </div>
-
-        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 sm:p-6 text-center sm:text-left">
-          <h2 className="text-lg sm:text-xl font-bold text-white mb-2">Actions Humanitaires</h2>
-          <p className="text-sm sm:text-base text-slate-300">
-            La fondation a contribué au développement de cinq orphelinats au Cameroun et conclu un partenariat avec l&apos;USP Fundacion Alex (Barcelone) pour fournir des soins hospitaliers aux enfants camerounais. Nous utilisons également le sport comme moyen d&apos;aider à l&apos;intégration des enfants handicapés et déficients mentaux.
-          </p>
-        </div>
-
-        <div className="text-center bg-gradient-to-r from-blue-600/20 to-emerald-600/20 rounded-xl p-4 sm:p-6 border border-blue-500/30">
-          <p className="text-white font-semibold text-lg sm:text-xl mb-2">{t("togetherWeCan")}</p>
+        {/* Registration/Login Card - First */}
+        <div className="text-center bg-gradient-to-r from-blue-600/20 to-emerald-600/20 rounded-xl p-4 sm:p-6 border border-blue-500/30 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:border-blue-400/50 hover:shadow-blue-500/20 hover:shadow-2xl">
+          <p className="text-white font-semibold text-lg sm:text-xl mb-2">{t("joinFoundation")}</p>
           <p className="text-slate-300 text-sm sm:text-base mb-4">
             {t("collaborate")}
           </p>
@@ -86,6 +47,46 @@ export default function Home() {
               <Link href="/login">{t("login")}</Link>
             </Button>
           </div>
+        </div>
+
+        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 sm:p-6 text-center sm:text-left transition-all duration-300 ease-in-out hover:-translate-y-2 hover:border-blue-500/50 hover:shadow-blue-500/20 hover:shadow-2xl">
+          <h2 className="text-lg sm:text-xl font-bold text-white mb-2">{t("ourMission")}</h2>
+          <p className="text-sm sm:text-base text-slate-300">
+            {t("missionDesc")}
+          </p>
+        </div>
+
+        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 sm:p-6 text-center sm:text-left transition-all duration-300 ease-in-out hover:-translate-y-2 hover:border-blue-500/50 hover:shadow-blue-500/20 hover:shadow-2xl">
+          <h2 className="text-lg sm:text-xl font-bold text-white mb-2">{t("entrepreneurship")}</h2>
+          <p className="text-sm sm:text-base text-slate-300">
+            {t("entrepreneurshipDesc")}
+          </p>
+        </div>
+
+        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 sm:p-6 text-center sm:text-left transition-all duration-300 ease-in-out hover:-translate-y-2 hover:border-blue-500/50 hover:shadow-blue-500/20 hover:shadow-2xl">
+          <h2 className="text-lg sm:text-xl font-bold text-white mb-2">{t("fundesport")}</h2>
+          <p className="text-sm sm:text-base text-slate-300">
+            {t("fundesportDesc")}
+          </p>
+        </div>
+
+        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 sm:p-6 text-center sm:text-left transition-all duration-300 ease-in-out hover:-translate-y-2 hover:border-blue-500/50 hover:shadow-blue-500/20 hover:shadow-2xl">
+          <h2 className="text-lg sm:text-xl font-bold text-white mb-2">{t("objectives")}</h2>
+          <ul className="text-sm sm:text-base text-slate-300 space-y-2 list-disc list-inside">
+            <li>{t("obj1")}</li>
+            <li>{t("obj2")}</li>
+            <li>{t("obj3")}</li>
+            <li>{t("obj4")}</li>
+            <li>{t("obj5")}</li>
+            <li>{t("obj6")}</li>
+          </ul>
+        </div>
+
+        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 sm:p-6 text-center sm:text-left transition-all duration-300 ease-in-out hover:-translate-y-2 hover:border-blue-500/50 hover:shadow-blue-500/20 hover:shadow-2xl">
+          <h2 className="text-lg sm:text-xl font-bold text-white mb-2">{t("humanitarian")}</h2>
+          <p className="text-sm sm:text-base text-slate-300">
+            {t("humanitarianDesc")}
+          </p>
         </div>
       </div>
     </main>

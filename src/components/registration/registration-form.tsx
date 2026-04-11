@@ -361,9 +361,11 @@ export function RegistrationForm() {
             type="button"
             variant="outline"
             disabled={submitting || step === 0}
-            onClick={() => setStep((s) => Math.max(0, s - 1))}
+            onClick={() => {
+              if (step > 0) setStep(step - 1);
+            }}
           >
-            Back
+            {t("back")}
           </Button>
           {step < STEPS.length - 1 ? (
             <Button
