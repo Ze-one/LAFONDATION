@@ -112,9 +112,16 @@ return (
                 <h1 className="text-xl sm:text-2xl font-bold">User Details: {user.fullName}</h1>
                 <p className="text-slate-400 text-sm sm:text-base">{user.email}</p>
               </div>
-              <Link href="/admin/dashboard">
-                <Button variant="outline" size="sm">Back to Dashboard</Button>
-              </Link>
+              <div className="flex gap-2">
+                <Button asChild size="sm" variant="outline">
+                  <a href={`/api/admin/users/${user.id}/download`} target="_blank">
+                    Download User (PDF)
+                  </a>
+                </Button>
+                <Link href="/admin/dashboard">
+                  <Button variant="outline" size="sm">Back to Dashboard</Button>
+                </Link>
+              </div>
             </div>
           </header>
 
