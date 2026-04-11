@@ -10,8 +10,8 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="relative min-h-dvh px-3 sm:px-4 py-8 sm:py-16">
-      <div className="mx-auto max-w-sm sm:max-w-md">
+    <main className="relative min-h-dvh px-4 sm:px-8 lg:px-16 py-8 sm:py-16 flex items-center justify-center">
+      <div className="w-full max-w-[90%] sm:max-w-md lg:max-w-md">
         <LoginForm />
       </div>
     </main>

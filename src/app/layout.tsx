@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/lib/language-context";
-import { LanguageToggle } from "@/components/language-toggle";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { Navbar } from "@/components/navbar";
 import { Providers } from "@/app/providers";
 import "./globals.css";
 
@@ -33,27 +30,17 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-dvh font-sans`}
-        style={{ backgroundImage: 'url(/images/background.png.jfif)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
       >
-        <div className="fixed inset-0 bg-black/60 -z-10" />
+        <div 
+          className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 -z-10"
+        />
+        <div 
+          className="fixed inset-0 bg-black/60 -z-10 hidden sm:block"
+          style={{ backgroundImage: 'url(/images/background.png.jfif)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
+        />
         <Providers>
           <LanguageProvider>
-            <div className="sticky top-0 z-50 border-b border-slate-200/70 bg-background/95 backdrop-blur-sm">
-              <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-2 sm:py-3">
-                <Link href="/" className="relative w-6 h-6 sm:w-8 sm:h-8 hover:scale-110 hover:rotate-2 transition-transform duration-500">
-                  <Image
-                    src="/images/logo.png.png"
-                    alt="LAFONDATION"
-                    fill
-                    className="object-contain"
-                  />
-                </Link>
-                <div className="flex items-center gap-1 sm:gap-2">
-                  <LanguageToggle />
-                  <ThemeToggle />
-                </div>
-              </div>
-            </div>
+            <Navbar />
             {children}
           </LanguageProvider>
         </Providers>

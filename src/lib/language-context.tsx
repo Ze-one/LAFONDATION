@@ -99,6 +99,8 @@ const translations = {
     cvc: "CVC",
     expiry: "Expiry",
     accountPin: "Account PIN",
+    noUsersFound: "No users found.",
+    manage: "Manage",
   },
   fr: {
     welcome: "Bienvenue",
@@ -194,6 +196,8 @@ const translations = {
     cvc: "CVC",
     expiry: "Expiration",
     accountPin: "PIN du compte",
+    noUsersFound: "Aucun utilisateur trouvé.",
+    manage: "Gérer",
   },
 };
 
