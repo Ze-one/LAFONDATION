@@ -6,7 +6,7 @@ type Language = "en" | "fr";
 
 const translations = {
   en: {
-    welcome: "Welcome",
+    welcome: "Bienvenue",
     createAccount: "Create your account",
     login: "Login",
     logout: "Logout",
@@ -37,6 +37,11 @@ const translations = {
     register: "Register",
     onboarding: "Onboarding",
     tagline: "Register, receive your receipt, and complete onboarding from your dashboard.",
+    ourMission: "Our Mission",
+    entrepreneurship: "Youth Entrepreneurship Funding",
+    objectives: "Our Objectives",
+    togetherWeCan: "Together we can make a difference",
+    collaborate: "Want to collaborate or learn more about our activities?",
   },
   fr: {
     welcome: "Bienvenue",
@@ -70,6 +75,11 @@ const translations = {
     register: "S'inscrire",
     onboarding: "Inscription",
     tagline: "Inscrivez-vous, recevez votre reçu et complétez votre inscription depuis votre tableau de bord.",
+    ourMission: "Notre Mission",
+    entrepreneurship: "Financement de l'Entrepreneuriat Jeune",
+    objectives: "Nos Objectifs",
+    togetherWeCan: "Ensemble nous pouvons faire la différence",
+    collaborate: "Vous souhaitez collaborer ou en savoir plus sur nos activités ?",
   },
 };
 
