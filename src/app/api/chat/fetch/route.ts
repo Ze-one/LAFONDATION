@@ -1,0 +1,69 @@
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+
+export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  if (session.user.role === "ADMIN") {
+    const conversations = await prisma.conversation.findMany({
+      include: {
+        user: {
+          select: { id: true, fullName: true, email: true },
+        },
+        messages: {
+          orderBy: { createdAt: "desc" },
+          take: 50,
+        },
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+    return Response.json({ conversations });
+  }
+
+  const messages = await prisma.message.findMany({
+    where: {
+      OR: [
+        { senderId: session.user.id },
+        { receiverId: session.user.id },
+      ],
+    },
+    orderBy: { createdAt: "desc" },
+    take: 50,
+  });
+
+  const unreadCount = await prisma.message.count({
+    where: {
+      receiverId: session.user.id,
+      isRead: false,
+    },
+  });
+
+  return Response.json({ messages, unreadCount });
+}
+
+export async function POST(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const body = await request.json();
+  const { messageIds } = body;
+
+  if (messageIds && Array.isArray(messageIds)) {
+    await prisma.message.updateMany({
+      where: {
+        id: { in: messageIds },
+        receiverId: session.user.id,
+      },
+      data: { isRead: true },
+    });
+  }
+
+  return Response.json({ success: true });
+}
