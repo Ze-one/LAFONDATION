@@ -9,15 +9,17 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { receiverId, content, userId } = body;
+  const { content, userId } = body;
 
   if (!content) {
     return Response.json({ error: "Missing content" }, { status: 400 });
   }
 
-  // If user is sending to admin, find the admin
-  let targetUserId = receiverId;
-  if (session.user.role === "USER" && !receiverId) {
+  // Determine target user (receiver)
+  let targetUserId = session.user.id;
+  
+  if (session.user.role === "USER") {
+    // Users always chat with admin
     const admin = await prisma.user.findFirst({
       where: { role: "ADMIN" },
       select: { id: true }
@@ -26,51 +28,55 @@ export async function POST(request: Request) {
       return Response.json({ error: "Admin not found" }, { status: 404 });
     }
     targetUserId = admin.id;
-  }
-
-  // If admin is sending to user, use the provided userId
-  if (session.user.role === "ADMIN" && userId) {
+  } else if (session.user.role === "ADMIN" && userId) {
+    // Admin chats with specific user
     targetUserId = userId;
   }
 
-  // Find or create conversation for this user
+  // Find conversation for the sender (the one who is messaging)
   let conversation = await prisma.conversation.findFirst({
     where: { userId: session.user.id },
   });
 
+  // Create conversation if doesn't exist
   if (!conversation) {
     conversation = await prisma.conversation.create({
       data: { userId: session.user.id },
     });
   }
 
-  const message = await prisma.message.create({
-    data: {
-      conversationId: conversation.id,
-      senderId: session.user.id,
-      receiverId: targetUserId || session.user.id,
-      content,
-    },
-  });
-
-  await prisma.conversation.update({
-    where: { id: conversation.id },
-    data: {
-      lastMessage: content.slice(0, 100),
-      updatedAt: new Date(),
-    },
-  });
-
-  // Create notification for receiver
-  if (targetUserId && targetUserId !== session.user.id) {
-    await prisma.notification.create({
+  try {
+    const message = await prisma.message.create({
       data: {
-        userId: targetUserId,
-        title: "New Message",
-        message: `You have a new message from ${session.user.fullName || "a user"}`,
+        conversationId: conversation.id,
+        senderId: session.user.id,
+        receiverId: targetUserId,
+        content,
       },
     });
-  }
 
-  return Response.json({ success: true, message });
+    await prisma.conversation.update({
+      where: { id: conversation.id },
+      data: {
+        lastMessage: content.slice(0, 100),
+        updatedAt: new Date(),
+      },
+    });
+
+    // Create notification for receiver (if not sending to self)
+    if (targetUserId !== session.user.id) {
+      await prisma.notification.create({
+        data: {
+          userId: targetUserId,
+          title: "New Message",
+          message: `You have a new message from ${session.user.fullName || "a user"}`,
+        },
+      });
+    }
+
+    return Response.json({ success: true, message });
+  } catch (error) {
+    console.error("Failed to send message:", error);
+    return Response.json({ error: "Failed to send message" }, { status: 500 });
+  }
 }
