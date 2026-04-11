@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   }
 
   // Determine target user (receiver)
-  let targetUserId = session.user.id;
+  let targetUserId: string;
   
   if (session.user.role === "USER") {
     // Users always chat with admin
@@ -29,19 +29,23 @@ export async function POST(request: Request) {
     }
     targetUserId = admin.id;
   } else if (session.user.role === "ADMIN" && userId) {
-    // Admin chats with specific user
     targetUserId = userId;
+  } else {
+    return Response.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  // Find conversation for the sender (the one who is messaging)
+  // Find conversation - using the USER's conversation (not admin's)
+  // For regular users, conversation userId = user.id
+  // For admin, conversation userId = targetUserId (the user they're chatting with)
+  const convUserId = session.user.role === "ADMIN" ? targetUserId : session.user.id;
+  
   let conversation = await prisma.conversation.findFirst({
-    where: { userId: session.user.id },
+    where: { userId: convUserId },
   });
 
-  // Create conversation if doesn't exist
   if (!conversation) {
     conversation = await prisma.conversation.create({
-      data: { userId: session.user.id },
+      data: { userId: convUserId },
     });
   }
 
@@ -55,6 +59,7 @@ export async function POST(request: Request) {
       },
     });
 
+    // Update conversation
     await prisma.conversation.update({
       where: { id: conversation.id },
       data: {
@@ -63,7 +68,7 @@ export async function POST(request: Request) {
       },
     });
 
-    // Create notification for receiver (if not sending to self)
+    // Notify receiver
     if (targetUserId !== session.user.id) {
       await prisma.notification.create({
         data: {

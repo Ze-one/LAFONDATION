@@ -41,18 +41,17 @@ export async function GET(request: Request) {
     return Response.json({ conversations });
   }
 
-  // For regular users, get their messages
-  const conversation = await prisma.conversation.findFirst({
-    where: { userId: session.user.id },
-    include: {
-      messages: {
-        orderBy: { createdAt: "desc" },
-        take: 50,
-      },
+  // For regular users, get messages where they are sender OR receiver
+  const messages = await prisma.message.findMany({
+    where: {
+      OR: [
+        { senderId: session.user.id },
+        { receiverId: session.user.id },
+      ],
     },
+    orderBy: { createdAt: "desc" },
+    take: 50,
   });
-
-  const messages = conversation?.messages || [];
 
   const unreadCount = await prisma.message.count({
     where: {
