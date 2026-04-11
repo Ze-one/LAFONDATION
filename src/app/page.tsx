@@ -10,7 +10,7 @@ export default function Home() {
   
   return (
     <main className="relative flex min-h-dvh flex-col items-center justify-center gap-6 sm:gap-8 px-3 sm:px-4 py-8 sm:py-12">
-      <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 hover:scale-110 hover:rotate-2 transition-transform duration-500 z-10">
+      <div className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 hover:scale-110 hover:rotate-2 transition-transform duration-500 z-10">
         <Image
           src="/images/logo.png.png"
           alt="LAFONDATION Logo"
