@@ -15,13 +15,10 @@ interface Message {
   createdAt: string;
 }
 
-interface ConversationWithUser {
+interface UserInfo {
   id: string;
-  userId: string;
-  user: { id: string; fullName: string; email: string };
-  messages: Message[];
-  lastMessage: string | null;
-  updatedAt: string;
+  fullName: string;
+  email: string;
 }
 
 interface ChatComponentProps {
@@ -33,8 +30,8 @@ interface ChatComponentProps {
 export function ChatComponent({ currentUserId, currentUserRole, isAdmin = false }: ChatComponentProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [conversations, setConversations] = useState<ConversationWithUser[]>([]);
-  const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
+  const [users, setUsers] = useState<UserInfo[]>([]);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState("");
   const [unreadCount, setUnreadCount] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
@@ -44,24 +41,41 @@ export function ChatComponent({ currentUserId, currentUserRole, isAdmin = false 
   useEffect(() => {
     if (isOpen) {
       fetchMessages();
+      if (isAdmin) {
+        fetchUsers();
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, isAdmin]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  async function fetchUsers() {
+    try {
+      const res = await fetch("/api/chat/users");
+      const data = await res.json();
+      if (data.users) {
+        setUsers(data.users);
+        if (data.users.length > 0 && !selectedUserId) {
+          setSelectedUserId(data.users[0].id);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to fetch users:", e);
+    }
+  }
+
   async function fetchMessages() {
     try {
-      const res = await fetch("/api/chat/fetch");
+      const url = isAdmin && selectedUserId 
+        ? `/api/chat/fetch?userId=${selectedUserId}` 
+        : "/api/chat/fetch";
+      const res = await fetch(url);
       const data = await res.json();
       
-      if (isAdmin && data.conversations) {
-        setConversations(data.conversations);
-        if (data.conversations.length > 0 && !selectedConversation) {
-          setSelectedConversation(data.conversations[0].id);
-          setMessages(data.conversations[0].messages);
-        }
+      if (isAdmin && data.messages) {
+        setMessages(data.messages);
       } else if (data.messages) {
         setMessages(data.messages);
         setUnreadCount(data.unreadCount || 0);
@@ -76,15 +90,11 @@ export function ChatComponent({ currentUserId, currentUserRole, isAdmin = false 
     
     setIsTyping(true);
     try {
-      const receiverId = isAdmin 
-        ? conversations.find(c => c.id === selectedConversation)?.userId 
-        : "admin-id-placeholder";
-      
       const res = await fetch("/api/chat/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          receiverId: receiverId || currentUserId,
+          userId: isAdmin ? selectedUserId : undefined,
           content: newMessage,
         }),
       });
@@ -94,6 +104,8 @@ export function ChatComponent({ currentUserId, currentUserRole, isAdmin = false 
         setMessages(prev => [data.message, ...prev]);
         setNewMessage("");
         toast.success("Message sent!");
+      } else {
+        toast.error(data.error || "Failed to send");
       }
     } catch (e) {
       console.error("Failed to send message:", e);
@@ -103,17 +115,22 @@ export function ChatComponent({ currentUserId, currentUserRole, isAdmin = false 
     }
   }
 
-  function selectConversation(convId: string) {
-    setSelectedConversation(convId);
-    const conv = conversations.find(c => c.id === convId);
-    if (conv) {
-      setMessages(conv.messages);
-    }
+  function selectUser(userId: string) {
+    setSelectedUserId(userId);
+    fetchMessagesForUser(userId);
   }
 
-  const currentMessages = selectedConversation 
-    ? conversations.find(c => c.id === selectedConversation)?.messages || messages
-    : messages;
+  async function fetchMessagesForUser(userId: string) {
+    try {
+      const res = await fetch(`/api/chat/fetch?userId=${userId}`);
+      const data = await res.json();
+      if (data.messages) {
+        setMessages(data.messages);
+      }
+    } catch (e) {
+      console.error("Failed to fetch messages for user:", e);
+    }
+  }
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
@@ -145,29 +162,29 @@ export function ChatComponent({ currentUserId, currentUserRole, isAdmin = false 
             </button>
           </div>
 
-          {isAdmin && conversations.length > 0 && (
+          {isAdmin && users.length > 0 && (
             <div className="flex gap-1 p-2 overflow-x-auto border-b border-white/10">
-              {conversations.map(conv => (
+              {users.map(user => (
                 <button
-                  key={conv.id}
-                  onClick={() => selectConversation(conv.id)}
+                  key={user.id}
+                  onClick={() => selectUser(user.id)}
                   className={`px-3 py-1 rounded-full text-xs whitespace-nowrap transition-colors ${
-                    selectedConversation === conv.id
+                    selectedUserId === user.id
                       ? "bg-blue-500 text-white"
                       : "bg-white/10 text-slate-300 hover:bg-white/20"
                   }`}
                 >
-                  {conv.user?.fullName || conv.user?.email || "User"}
+                  {user.fullName || user.email || "User"}
                 </button>
               ))}
             </div>
           )}
 
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
-            {currentMessages.length === 0 ? (
-              <p className="text-slate-400 text-center text-sm">No messages yet</p>
+            {messages.length === 0 ? (
+              <p className="text-slate-400 text-center text-sm">No messages yet. Start a conversation!</p>
             ) : (
-              currentMessages.map(msg => (
+              messages.map(msg => (
                 <div
                   key={msg.id}
                   className={`flex ${msg.senderId === currentUserId ? "justify-end" : "justify-start"}`}

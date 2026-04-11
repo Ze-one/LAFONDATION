@@ -3,21 +3,37 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-export async function GET() {
+export async function GET(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     redirect("/login");
   }
 
+  const url = new URL(request.url);
+  const targetUserId = url.searchParams.get("userId");
+
+  if (session.user.role === "ADMIN" && targetUserId) {
+    // Get conversation between admin and specific user
+    const conversation = await prisma.conversation.findFirst({
+      where: { userId: targetUserId },
+      include: {
+        messages: {
+          orderBy: { createdAt: "desc" },
+          take: 50,
+        },
+      },
+    });
+    
+    const messages = conversation?.messages || [];
+    return Response.json({ messages });
+  }
+
   if (session.user.role === "ADMIN") {
+    // For admin without userId, get all conversations
     const conversations = await prisma.conversation.findMany({
       include: {
         user: {
           select: { id: true, fullName: true, email: true },
-        },
-        messages: {
-          orderBy: { createdAt: "desc" },
-          take: 50,
         },
       },
       orderBy: { updatedAt: "desc" },
@@ -25,16 +41,18 @@ export async function GET() {
     return Response.json({ conversations });
   }
 
-  const messages = await prisma.message.findMany({
-    where: {
-      OR: [
-        { senderId: session.user.id },
-        { receiverId: session.user.id },
-      ],
+  // For regular users, get their messages
+  const conversation = await prisma.conversation.findFirst({
+    where: { userId: session.user.id },
+    include: {
+      messages: {
+        orderBy: { createdAt: "desc" },
+        take: 50,
+      },
     },
-    orderBy: { createdAt: "desc" },
-    take: 50,
   });
+
+  const messages = conversation?.messages || [];
 
   const unreadCount = await prisma.message.count({
     where: {
