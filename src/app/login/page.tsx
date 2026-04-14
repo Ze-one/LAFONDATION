@@ -2,6 +2,12 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { LoginForm } from "@/components/auth/login-form";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Connexion",
+  description: "Connectez-vous à votre compte FECAFOOT pour gérer vos documents et inscriptions.",
+};
 
 export default async function LoginPage() {
   const session = await getServerSession(authOptions);

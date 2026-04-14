@@ -5,6 +5,12 @@ import { prisma } from "@/lib/prisma";
 import { DashboardContent } from "@/components/dashboard/dashboard-content";
 import { ChatWrapper } from "@/components/chat/chat-wrapper";
 import { DocType } from "@prisma/client";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Tableau de bord",
+  description: "Gérez vos documents, inscriptions et activités FECAFOOT.",
+};
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);

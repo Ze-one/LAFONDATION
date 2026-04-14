@@ -4,6 +4,12 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { AdminDashboardContent } from "@/components/admin/admin-dashboard-content";
 import { ChatWrapper } from "@/components/chat/chat-wrapper";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Administration",
+  description: "Tableau de bord administrateur FECAFOOT - Gestion des utilisateurs et documents.",
+};
 
 export default async function AdminDashboardPage() {
   const session = await getServerSession(authOptions);

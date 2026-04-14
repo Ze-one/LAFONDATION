@@ -4,6 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/language-context";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Accueil",
+  description: "Bienvenue à la fondation FECAFOOT - Plateforme de gestion et d'inscription.",
+};
 
 export default function Home() {
   const { t } = useLanguage();

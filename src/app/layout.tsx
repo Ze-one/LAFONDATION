@@ -17,10 +17,39 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LAFONDATION | Officiel FECAFOOT",
-  description: "Plateforme de gestion de la fondation FECAFOOT",
+  title: {
+    default: "LAFONDATION | Officiel FECAFOOT",
+    template: "%s | FECAFOOT",
+  },
+  description: "Plateforme de gestion de la fondation FECAFOOT - Gestion des documents et inscription utilisateur",
   verification: {
     google: "gmxRo3fnXDLAGU_pQ_gjdN0g1h8NS0F6_6OCGQPeusY",
+  },
+  metadataBase: new URL("https://lafondation.vercel.app"),
+  openGraph: {
+    type: "website",
+    locale: "fr_FR",
+    url: "https://lafondation.vercel.app",
+    siteName: "LAFONDATION FECAFOOT",
+    title: "LAFONDATION | Officiel FECAFOOT",
+    description: "Plateforme de gestion de la fondation FECAFOOT",
+    images: [
+      {
+        url: "/images/logo-primary.png.jfif",
+        width: 1200,
+        height: 630,
+        alt: "LAFONDATION FECAFOOT Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "LAFONDATION | Officiel FECAFOOT",
+    description: "Plateforme de gestion de la fondation FECAFOOT",
+    images: ["/images/logo-primary.png.jfif"],
+  },
+  icons: {
+    icon: "/favicon.ico",
   },
 };
 
