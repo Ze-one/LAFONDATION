@@ -64,11 +64,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} min-h-dvh font-sans`}
       >
         <div 
-          className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 -z-10"
+          className="fixed inset-0 bg-slate-950 -z-10"
         />
         <div 
-          className="fixed inset-0 bg-black/85 -z-10 hidden sm:block"
-          style={{ backgroundImage: 'url(/images/background.png.jfif)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
+          className="fixed inset-0 bg-black/90 -z-10"
+          style={{ backgroundImage: 'url(/images/background.png.jfif)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', opacity: 0.4 }}
         />
         <Providers>
           <LanguageProvider>
