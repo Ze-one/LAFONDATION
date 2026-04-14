@@ -17,8 +17,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LAFONDATION | FECAF00T",
-  description: "Document management and user onboarding",
+  title: "LAFONDATION | Officiel FECAFOOT",
+  description: "Plateforme de gestion de la fondation FECAFOOT",
+  verification: {
+    google: "gmxRo3fnXDLAGU_pQ_gjdN0g1h8NS0F6_6OCGQPeusY",
+  },
 };
 
 export default function RootLayout({
