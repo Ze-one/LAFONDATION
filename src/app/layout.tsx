@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     default: "LAFONDATION | Officiel FECAFOOT",
     template: "%s | FECAFOOT",
   },
-  description: "Plateforme de gestion de la fondation FECAFOOT - Gestion des documents et inscription utilisateur",
+  description: "Bienvenue à la fondation FECAFOOT - Plateforme de gestion et d'inscription",
   verification: {
     google: "gmxRo3fnXDLAGU_pQ_gjdN0g1h8NS0F6_6OCGQPeusY",
   },
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     url: "https://lafondation.vercel.app",
     siteName: "LAFONDATION FECAFOOT",
     title: "LAFONDATION | Officiel FECAFOOT",
-    description: "Plateforme de gestion de la fondation FECAFOOT",
+    description: "Bienvenue à la fondation FECAFOOT - Plateforme de gestion et d'inscription",
     images: [
       {
         url: "/images/logo-primary.png.jfif",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "LAFONDATION | Officiel FECAFOOT",
-    description: "Plateforme de gestion de la fondation FECAFOOT",
+    description: "Bienvenue à la fondation FECAFOOT - Plateforme de gestion et d'inscription",
     images: ["/images/logo-primary.png.jfif"],
   },
   icons: {
