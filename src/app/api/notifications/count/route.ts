@@ -5,15 +5,18 @@ import { prisma } from "@/lib/prisma";
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+    return Response.json({ count: 0 });
   }
 
-  const count = await prisma.notification.count({
-    where: {
-      userId: session.user.id,
-      isRead: false,
-    },
-  });
-
-  return Response.json({ count });
+  try {
+    const count = await prisma.notification.count({
+      where: {
+        userId: session.user.id,
+        isRead: false,
+      },
+    });
+    return Response.json({ count });
+  } catch {
+    return Response.json({ count: 0 });
+  }
 }
