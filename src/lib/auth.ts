@@ -4,27 +4,15 @@ import type { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 
-const nextAuthUrl =
-  process.env.NEXTAUTH_URL ??
-  process.env.URL ??
-  process.env.DEPLOY_URL ??
-  (process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://laf0ndation.netlify.app");
+const nextAuthUrl = process.env.NEXTAUTH_URL ?? "https://lafondation.vercel.app";
+const nextAuthSecret = process.env.NEXTAUTH_SECRET ?? "MaFondationSecurisee2026!@#SuperSecret";
 
-const nextAuthSecret =
-  process.env.NEXTAUTH_SECRET ??
-  "MaFondationSecurisee2026!@#SuperSecret";
-
-if (!process.env.NEXTAUTH_URL) {
-  process.env.NEXTAUTH_URL = nextAuthUrl;
-}
-
-if (!process.env.NEXTAUTH_SECRET) {
-  process.env.NEXTAUTH_SECRET = nextAuthSecret;
-}
+process.env.NEXTAUTH_URL = nextAuthUrl;
+process.env.NEXTAUTH_SECRET = nextAuthSecret;
 
 export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt", maxAge: 24 * 60 * 60 },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: nextAuthSecret,
   pages: {
     signIn: "/login",
   },
