@@ -46,16 +46,24 @@ interface OtherDoc {
   status: DocStatus;
 }
 
+interface CustomRequest {
+  id: string;
+  name: string;
+  status: string;
+}
+
 export function DashboardContent({ 
   user, 
   otherDocs, 
   signedReceipt, 
-  certificate 
+  certificate,
+  customRequests = []
 }: { 
   user: User; 
   otherDocs: OtherDoc[]; 
   signedReceipt: OtherDoc | null; 
   certificate: OtherDoc | null;
+  customRequests?: CustomRequest[];
 }) {
   const { t } = useLanguage();
   
@@ -113,9 +121,33 @@ export function DashboardContent({
                   label: doc.label,
                   status: doc.status,
                 }))}
+                customRequests={customRequests}
               />
             </CardContent>
           </Card>
+
+          {customRequests.length > 0 && (
+            <Card className="transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl">
+              <CardHeader>
+                <CardTitle>Custom Document Requests</CardTitle>
+                <CardDescription>
+                  Additional documents requested by admin
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {customRequests.map((req) => (
+                    <div key={req.id} className="flex justify-between items-center border border-slate-700 rounded p-3">
+                      <span className="text-white">{req.name}</span>
+                      <span className={`text-sm ${req.status === "COMPLETED" ? "text-green-400" : "text-yellow-400"}`}>
+                        {req.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </main>

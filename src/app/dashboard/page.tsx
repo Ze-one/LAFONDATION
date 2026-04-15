@@ -27,6 +27,7 @@ export default async function DashboardPage() {
     include: {
       documents: { orderBy: { createdAt: "desc" } },
       notifications: { orderBy: { createdAt: "desc" }, take: 10 },
+      customRequests: { orderBy: { createdAt: "desc" } },
     },
   });
 
@@ -41,6 +42,11 @@ export default async function DashboardPage() {
   }));
   const signedReceipt = user.documents.find((d) => d.type === DocType.RECEIPT);
   const certificate = user.documents.find((d) => d.type === DocType.CERTIFICATE);
+  const customRequests = user.customRequests.map((r) => ({
+    id: r.id,
+    name: r.name,
+    status: r.status,
+  }));
 
   return (
     <>
@@ -49,6 +55,7 @@ export default async function DashboardPage() {
         otherDocs={otherDocs} 
         signedReceipt={signedReceipt ? { id: signedReceipt.id, label: signedReceipt.fileName, status: signedReceipt.status } : null} 
         certificate={certificate ? { id: certificate.id, label: certificate.fileName, status: certificate.status } : null} 
+        customRequests={customRequests}
       />
       <ChatWrapper userId={user.id} userRole={user.role} />
     </>

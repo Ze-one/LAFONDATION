@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { DocStatus, DocType } from "@prisma/client";
-import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { DocStatus } from "@prisma/client";
 import { useLanguage } from "@/lib/language-context";
 import { toast } from "sonner";
 
@@ -17,6 +17,7 @@ type UploadCenterProps = {
   signedReceiptStatus: DocStatus;
   certificateStatus: DocStatus;
   otherDocs: OtherDoc[];
+  customRequests?: Array<{ id: string; name: string; status: string }>;
 };
 
 function getStatusLabel(status: DocStatus, pendingLabel: string, verifiedLabel: string, rejectedLabel: string) {
@@ -133,7 +134,30 @@ function DocumentRow({
                   </svg>
                 </button>
                 {showMenu && (
-                  <div className="absolute right-0 top-full mt-1 w-32 bg-slate-900 border border-slate-700 rounded-lg shadow-xl z-10 overflow-hidden">
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="absolute right-0 top-full mt-1 w-36 bg-slate-900 border border-slate-700 rounded-lg shadow-xl z-10 overflow-hidden"
+                  >
+                    <button
+                      onClick={() => { setShowMenu(false); }}
+                      className="w-full px-3 py-2 text-left text-sm text-white hover:bg-slate-800 flex items-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      View
+                    </button>
+                    <button
+                      onClick={() => { setShowMenu(false); window.open(`/api/documents/${docId}?view=1`, '_blank'); }}
+                      className="w-full px-3 py-2 text-left text-sm text-white hover:bg-slate-800 flex items-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      View Full
+                    </button>
                     <button
                       onClick={() => { setShowMenu(false); deleteFile(); }}
                       className="w-full px-3 py-2 text-left text-sm text-red-400 hover:bg-slate-800 flex items-center gap-2"
@@ -143,7 +167,7 @@ function DocumentRow({
                       </svg>
                       Delete
                     </button>
-                  </div>
+                  </motion.div>
                 )}
               </div>
             )}
@@ -173,13 +197,22 @@ function DocumentRow({
   );
 }
 
-export function UploadCenter({ signedReceiptStatus, certificateStatus, otherDocs }: UploadCenterProps) {
+export function UploadCenter({ signedReceiptStatus, certificateStatus, otherDocs, customRequests = [] }: UploadCenterProps) {
   const { t } = useLanguage();
 
   return (
     <div className="space-y-4">
       <DocumentRow label={t("signedReceipt")} status={signedReceiptStatus} type="RECEIPT" />
       <DocumentRow label={t("certificate")} status={certificateStatus} type="CERTIFICATE" />
+
+      {customRequests.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-sm font-semibold text-yellow-400">Custom Document Requests</p>
+          {customRequests.map((req) => (
+            <DocumentRow key={req.id} label={req.name} status={req.status as DocStatus} type="OTHER" />
+          ))}
+        </div>
+      )}
 
       <div className="space-y-2">
         <p className="text-sm font-semibold text-white">{t("otherDocuments")}</p>
