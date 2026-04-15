@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   verification: {
     google: "gmxRo3fnXDLAGU_pQ_gjdN0g1h8NS0F6_6OCGQPeusY",
   },
-  metadataBase: new URL("https://lafondation.vercel.app"),
+  metadataBase: process.env.NEXTAUTH_URL ? new URL(process.env.NEXTAUTH_URL) : undefined,
   openGraph: {
     type: "website",
     locale: "fr_FR",
