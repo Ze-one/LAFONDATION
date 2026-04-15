@@ -1,6 +1,8 @@
 import { RegistrationForm } from "@/components/registration/registration-form";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Inscription",
   description: "Inscrivez-vous à la fondation FECAFOOT et soumettez vos documents.",

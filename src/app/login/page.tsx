@@ -4,15 +4,21 @@ import { authOptions } from "@/lib/auth";
 import { LoginForm } from "@/components/auth/login-form";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Connexion",
   description: "Connectez-vous à votre compte FECAFOOT pour gérer vos documents et inscriptions.",
 };
 
 export default async function LoginPage() {
-  const session = await getServerSession(authOptions);
-  if (session?.user?.id) {
-    redirect("/dashboard");
+  try {
+    const session = await getServerSession(authOptions);
+    if (session?.user?.id) {
+      redirect("/dashboard");
+    }
+  } catch {
+    // Continue to login page
   }
 
   return (

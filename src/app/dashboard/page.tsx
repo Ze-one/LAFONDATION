@@ -7,6 +7,8 @@ import { ChatWrapper } from "@/components/chat/chat-wrapper";
 import { DocType } from "@prisma/client";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Tableau de bord",
   description: "Gérez vos documents, inscriptions et activités FECAFOOT.",
