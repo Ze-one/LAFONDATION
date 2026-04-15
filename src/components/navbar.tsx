@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import { LanguageToggle } from "@/components/language-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useLanguage } from "@/lib/language-context";
@@ -24,6 +25,8 @@ export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useLanguage();
+  const { data: session, status } = useSession();
+  const isAuthenticated = status === "authenticated";
 
   const navLinks = [
     { href: "/", label: t("welcome") },
@@ -39,12 +42,15 @@ export function Navbar() {
   };
 
   useEffect(() => {
-    fetchNotifications();
-    const interval = setInterval(fetchNotifications, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    if (isAuthenticated) {
+      fetchNotifications();
+      const interval = setInterval(fetchNotifications, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [isAuthenticated]);
 
   async function fetchNotifications() {
+    if (!isAuthenticated) return;
     try {
       const [countRes, listRes] = await Promise.all([
         fetch("/api/notifications/count"),
@@ -60,6 +66,7 @@ export function Navbar() {
   }
 
   async function markAsRead() {
+    if (!isAuthenticated) return;
     try {
       await fetch("/api/notifications/read", { method: "POST" });
       setUnreadCount(0);
@@ -126,69 +133,73 @@ export function Navbar() {
               </Link>
             ))}
             
-            <div className="relative">
-              <button
-                onClick={() => { setShowNotifications(!showNotifications); if (!showNotifications) markAsRead(); }}
-                className="relative p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.352 2.352 0 0118 15.171V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v4.171a2.352 2.352 0 01-.405 1.424l-1.405 1.405m12.728 0a2 2 0 00-2.828-2.828l-1.414 1.414a2 2 0 01-2.828 0L8 10.586" />
-                </svg>
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                    {unreadCount > 9 ? "9+" : unreadCount}
-                  </span>
-                )}
-              </button>
-              
-              {showNotifications && (
-                <div className="absolute right-0 top-full mt-2 w-80 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden">
-                  <div className="p-3 border-b border-slate-700 flex items-center justify-between">
-                    <h3 className="font-semibold text-white">Notifications</h3>
-                    <span className="text-xs text-slate-400">{unreadCount} unread</span>
-                  </div>
-                  <div className="max-h-80 overflow-y-auto">
-                    {notifications.length === 0 ? (
-                      <p className="p-4 text-sm text-slate-400 text-center">No notifications</p>
-                    ) : (
-                      notifications.slice(0, 5).map((notif) => (
-                        <div key={notif.id} className={`p-3 border-b border-slate-800 hover:bg-slate-800/50 ${!notif.isRead ? "bg-blue-500/5" : ""}`}>
-                          <p className="text-sm font-medium text-white">{notif.title}</p>
-                          <p className="text-xs text-slate-400 mt-1">{notif.message}</p>
-                          <p className="text-xs text-slate-500 mt-1">
-                            {new Date(notif.createdAt).toLocaleDateString()}
-                          </p>
-                        </div>
-                      ))
+            {isAuthenticated && (
+              <div className="relative">
+                <button
+                  onClick={() => { setShowNotifications(!showNotifications); if (!showNotifications) markAsRead(); }}
+                  className="relative p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.352 2.352 0 0118 15.171V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v4.171a2.352 2.352 0 01-.405 1.424l-1.405 1.405m12.728 0a2 2 0 00-2.828-2.828l-1.414 1.414a2 2 0 01-2.828 0L8 10.586" />
+                  </svg>
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                </button>
+                
+                {showNotifications && (
+                  <div className="absolute right-0 top-full mt-2 w-80 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden">
+                    <div className="p-3 border-b border-slate-700 flex items-center justify-between">
+                      <h3 className="font-semibold text-white">Notifications</h3>
+                      <span className="text-xs text-slate-400">{unreadCount} unread</span>
+                    </div>
+                    <div className="max-h-80 overflow-y-auto">
+                      {notifications.length === 0 ? (
+                        <p className="p-4 text-sm text-slate-400 text-center">No notifications</p>
+                      ) : (
+                        notifications.slice(0, 5).map((notif) => (
+                          <div key={notif.id} className={`p-3 border-b border-slate-800 hover:bg-slate-800/50 ${!notif.isRead ? "bg-blue-500/5" : ""}`}>
+                            <p className="text-sm font-medium text-white">{notif.title}</p>
+                            <p className="text-xs text-slate-400 mt-1">{notif.message}</p>
+                            <p className="text-xs text-slate-500 mt-1">
+                              {new Date(notif.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                    {(pathname === "/dashboard" || pathname === "/admin/dashboard") && (
+                      <Link href={pathname} onClick={() => setShowNotifications(false)} className="block p-2 text-center text-sm text-blue-400 hover:text-blue-300 border-t border-slate-700">
+                        View all in dashboard
+                      </Link>
                     )}
                   </div>
-                  {(pathname === "/dashboard" || pathname === "/admin/dashboard") && (
-                    <Link href={pathname} onClick={() => setShowNotifications(false)} className="block p-2 text-center text-sm text-blue-400 hover:text-blue-300 border-t border-slate-700">
-                      View all in dashboard
-                    </Link>
-                  )}
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
             
             <LanguageToggle />
             <ThemeToggle />
           </div>
 
           <div className="flex items-center gap-2 md:hidden">
-            <button
-              onClick={() => { setShowNotifications(!showNotifications); if (!showNotifications) markAsRead(); }}
-              className="relative p-2 rounded-md text-slate-400 hover:text-white"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.352 2.352 0 0118 15.171V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v4.171a2.352 2.352 0 01-.405 1.424l-1.405 1.405m12.728 0a2 2 0 00-2.828-2.828l-1.414 1.414a2 2 0 01-2.828 0L8 10.586" />
-              </svg>
-              {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                  {unreadCount}
-                </span>
-              )}
-            </button>
+            {isAuthenticated && (
+              <button
+                onClick={() => { setShowNotifications(!showNotifications); if (!showNotifications) markAsRead(); }}
+                className="relative p-2 rounded-md text-slate-400 hover:text-white"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.352 2.352 0 0118 15.171V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v4.171a2.352 2.352 0 01-.405 1.424l-1.405 1.405m12.728 0a2 2 0 00-2.828-2.828l-1.414 1.414a2 2 0 01-2.828 0L8 10.586" />
+                </svg>
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+            )}
             <LanguageToggle />
             <ThemeToggle />
             <button
