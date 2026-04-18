@@ -27,7 +27,7 @@ export function LoginForm() {
         email,
         password,
         redirect: false,
-      }, { callbackUrl: "/dashboard" });
+      });
       
       setLoading(false);
 
@@ -36,8 +36,7 @@ export function LoginForm() {
         return;
       }
 
-      router.push("/dashboard");
-      router.refresh();
+      window.location.href = "/dashboard";
     } catch (err) {
       setLoading(false);
       setError("An error occurred");
