@@ -23,24 +23,24 @@ export function LoginForm() {
     setLoading(true);
     
     try {
-      const result = await signIn("credentials", {
+      const res = await signIn("credentials", {
         email,
         password,
         redirect: false,
-        callbackUrl: "/dashboard",
-      });
+      }, { callbackUrl: "/dashboard" });
       
       setLoading(false);
 
-      if (!result || result.error) {
-        setError(t("invalidCredentials") || "Invalid credentials");
+      if (res?.error) {
+        setError("Invalid email or password");
         return;
       }
 
-      router.push(result.url || "/dashboard");
+      router.push("/dashboard");
+      router.refresh();
     } catch (err) {
       setLoading(false);
-      setError("An error occurred. Please try again.");
+      setError("An error occurred");
     }
   }
 
