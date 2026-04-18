@@ -4,10 +4,16 @@ import { getToken } from "next-auth/jwt";
 
 const secret = process.env.NEXTAUTH_SECRET ?? "MaFondationSecurisee2026!@#SuperSecret";
 
+const publicPaths = ["/", "/login", "/register", "/_next", "/favicon.ico"];
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
-  if (pathname.startsWith("/api/")) {
+  if (publicPaths.some(path => pathname === path || pathname.startsWith(path))) {
+    return NextResponse.next();
+  }
+  
+  if (pathname.startsWith("/api/") || pathname.startsWith("/_next")) {
     return NextResponse.next();
   }
   
@@ -15,7 +21,9 @@ export async function middleware(request: NextRequest) {
 
   if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) {
     if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
     }
     
     if (pathname.startsWith("/admin") && token.role !== "ADMIN") {
@@ -27,5 +35,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*"],
+  matcher: ["/((?!api|_next|favicon.ico).*)"],
 };

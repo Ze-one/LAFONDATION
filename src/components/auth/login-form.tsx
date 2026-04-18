@@ -23,10 +23,14 @@ export function LoginForm() {
     setLoading(true);
     
     try {
+      const searchParams = new URLSearchParams(window.location.search);
+      const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+      
       const res = await signIn("credentials", {
         email: email.trim().toLowerCase(),
         password,
         redirect: false,
+        callbackUrl: callbackUrl,
       });
       
       setLoading(false);
@@ -37,7 +41,9 @@ export function LoginForm() {
         return;
       }
 
-      window.location.href = "/dashboard";
+      if (res?.ok) {
+        window.location.href = callbackUrl;
+      }
     } catch (err) {
       setLoading(false);
       console.error("Login exception:", err);
