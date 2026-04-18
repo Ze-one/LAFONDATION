@@ -4,27 +4,24 @@ import { getToken } from "next-auth/jwt";
 
 const secret = process.env.NEXTAUTH_SECRET ?? "MaFondationSecurisee2026!@#SuperSecret";
 
-const publicPaths = ["/", "/login", "/register", "/api/auth", "/_next", "/favicon.ico", "/sitemap.xml"];
-
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
-  if (pathname.startsWith("/api/auth") || pathname.startsWith("/_next") || pathname === "/favicon.ico" || pathname === "/sitemap.xml") {
+  if (pathname.startsWith("/api/auth") || pathname.startsWith("/_next") || pathname.includes("favicon") || pathname.includes("sitemap")) {
     return NextResponse.next();
   }
   
-  if (publicPaths.includes(pathname)) {
+  if (pathname === "/login" || pathname === "/register" || pathname === "/") {
     return NextResponse.next();
   }
   
   const token = await getToken({ req: request, secret });
 
   if (!token) {
-    if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) {
-      const loginUrl = new URL("/login", request.url);
-      return NextResponse.redirect(loginUrl);
-    }
-  } else if (pathname.startsWith("/admin") && token.role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  if (pathname.startsWith("/admin") && token.role !== "ADMIN") {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 

@@ -27,7 +27,11 @@ export const authOptions: NextAuthOptions = {
         try {
           const email = credentials?.email?.trim().toLowerCase();
           const password = credentials?.password;
-          if (!email || !password) return null;
+          
+          if (!email || !password) {
+            console.error("AUTH_ERROR: Missing credentials");
+            return null;
+          }
 
           const user = await prisma.user.findUnique({
             where: { email },
@@ -40,6 +44,7 @@ export const authOptions: NextAuthOptions = {
               role: true,
             },
           });
+          
           if (!user) {
             console.error("AUTH_ERROR: User not found", email);
             return null;
@@ -51,7 +56,9 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
 
-return {
+          console.log("AUTH_SUCCESS: User logged in", user.email);
+          
+          return {
             id: user.id,
             email: user.email,
             name: user.fullName,
@@ -82,10 +89,6 @@ return {
       session.user.status = (token.status as Status) ?? "PENDING";
       session.user.role = (token.role as Role) ?? "USER";
       return session;
-    },
-    async redirect({ url, baseUrl }) {
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      return baseUrl;
     },
   },
 };
