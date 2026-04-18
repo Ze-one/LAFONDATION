@@ -25,6 +25,7 @@ export function LoginForm() {
     try {
       const searchParams = new URLSearchParams(window.location.search);
       const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+      console.log("Login attempt, callbackUrl:", callbackUrl);
       
       const res = await signIn("credentials", {
         email: email.trim().toLowerCase(),
@@ -33,6 +34,7 @@ export function LoginForm() {
         callbackUrl: callbackUrl,
       });
       
+      console.log("signIn result:", res);
       setLoading(false);
 
       if (res?.error) {
@@ -42,7 +44,8 @@ export function LoginForm() {
       }
 
       if (res?.ok) {
-        window.location.href = callbackUrl;
+        console.log("Login successful, redirecting to:", callbackUrl);
+        window.location.replace(callbackUrl);
       }
     } catch (err) {
       setLoading(false);
