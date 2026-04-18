@@ -1,15 +1,16 @@
 "use client";
 
+import { signIn } from "next-auth/react";
 import { useState } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/language-context";
-import { toast } from "sonner";
 
 export function LoginForm() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -21,37 +22,12 @@ export function LoginForm() {
     setError("");
     setLoading(true);
     
-    console.log("Attempting login for:", email);
-    
-    try {
-      const result = await signIn("credentials", {
-        email: email.trim().toLowerCase(),
-        password,
-        redirect: false,
-      });
-
-      console.log("SignIn result:", result);
-      setLoading(false);
-
-      if (result?.error) {
-        console.error("Login error:", result.error);
-        setError("Email ou mot de passe invalide");
-        toast.error("Échec de connexion");
-        return;
-      }
-
-      if (result?.ok) {
-        toast.success("Connexion réussie!");
-        setTimeout(() => {
-          window.location.href = "/dashboard";
-        }, 500);
-      }
-    } catch (err) {
-      console.error("Login exception:", err);
-      setLoading(false);
-      setError("Une erreur est survenue");
-      toast.error("Erreur de connexion");
-    }
+    await signIn("credentials", {
+      email: email.trim().toLowerCase(),
+      password,
+      redirect: true,
+      callbackUrl: "/dashboard",
+    });
   }
 
   return (
