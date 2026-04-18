@@ -16,12 +16,6 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/login",
   },
-  callbacks: {
-    async redirect({ url, baseUrl }) {
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      return baseUrl;
-    },
-  },
   providers: [
     Credentials({
       name: "Credentials",
