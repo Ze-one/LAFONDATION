@@ -91,4 +91,10 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  redirect: async ({ url, baseUrl }) => {
+    if (url.startsWith("/")) {
+      return `${baseUrl}${url}`;
+    }
+    return baseUrl;
+  },
 };
