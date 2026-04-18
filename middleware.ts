@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
+
+const secret = process.env.NEXTAUTH_SECRET ?? "MaFondationSecurisee2026!@#SuperSecret";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -8,13 +11,23 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
   
-  if (pathname === "/login" || pathname === "/register" || pathname === "/") {
+  if (pathname === "/" || pathname === "/login" || pathname === "/register") {
     return NextResponse.next();
+  }
+  
+  const token = await getToken({ req: request, secret });
+
+  if (!token) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  if (pathname.startsWith("/admin") && token.role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|favicon.ico|sitemap.xml).*)"],
+  matcher: ["/dashboard/:path*", "/admin/:path*", "/admin", "/dashboard"],
 };
