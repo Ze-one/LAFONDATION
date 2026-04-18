@@ -2,25 +2,25 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
+const secret = process.env.NEXTAUTH_SECRET ?? "MaFondationSecurisee2026!@#SuperSecret";
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-
-  if (pathname.startsWith("/dashboard")) {
-    if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
+  
+  if (pathname.startsWith("/api/")) {
     return NextResponse.next();
   }
+  
+  const token = await getToken({ req: request, secret });
 
-  if (pathname.startsWith("/admin")) {
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) {
     if (!token) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
-    if (token.role !== "ADMIN") {
+    
+    if (pathname.startsWith("/admin") && token.role !== "ADMIN") {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
-    return NextResponse.next();
   }
 
   return NextResponse.next();

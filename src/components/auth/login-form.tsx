@@ -21,19 +21,27 @@ export function LoginForm() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-    setLoading(false);
+    
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+        callbackUrl: "/dashboard",
+      });
+      
+      setLoading(false);
 
-    if (!result || result.error) {
-      setError(t("invalidCredentials"));
-      return;
+      if (!result || result.error) {
+        setError(t("invalidCredentials") || "Invalid credentials");
+        return;
+      }
+
+      router.push(result.url || "/dashboard");
+    } catch (err) {
+      setLoading(false);
+      setError("An error occurred. Please try again.");
     }
-
-    router.push("/dashboard");
   }
 
   return (
