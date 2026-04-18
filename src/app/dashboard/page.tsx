@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Tableau de bord",
-  description: "Gérez vos documents, inscriptions et activités FECAFOOT.",
+  description: "Gérez vos documents, inscriptions et activités SAMUEL ET'00.",
 };
 
 export default async function DashboardPage() {

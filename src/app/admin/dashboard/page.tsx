@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Administration",
-  description: "Tableau de bord administrateur FECAFOOT - Gestion des utilisateurs et documents.",
+  description: "Tableau de bord administrateur SAMUEL ET'00 - Gestion des utilisateurs et documents.",
 };
 
 export default async function AdminDashboardPage() {

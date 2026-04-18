@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Connexion",
-  description: "Connectez-vous à votre compte FECAFOOT pour gérer vos documents et inscriptions.",
+  description: "Connectez-vous à votre compte SAMUEL ET'00 pour gérer vos documents et inscriptions.",
 };
 
 export default async function LoginPage() {

@@ -24,7 +24,7 @@ export function LoginForm() {
     
     try {
       const res = await signIn("credentials", {
-        email,
+        email: email.trim().toLowerCase(),
         password,
         redirect: false,
       });
@@ -32,14 +32,16 @@ export function LoginForm() {
       setLoading(false);
 
       if (res?.error) {
-        setError("Invalid email or password");
+        console.error("Login Error:", res.error);
+        setError("Email ou mot de passe invalide");
         return;
       }
 
       window.location.href = "/dashboard";
     } catch (err) {
       setLoading(false);
-      setError("An error occurred");
+      console.error("Login exception:", err);
+      setError("Une erreur est survenue");
     }
   }
 

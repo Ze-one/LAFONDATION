@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Inscription",
-  description: "Inscrivez-vous à la fondation FECAFOOT et soumettez vos documents.",
+  description: "Inscrivez-vous à la fondation SAMUEL ET'00 et soumettez vos documents.",
 };
 
 export default function RegisterPage() {

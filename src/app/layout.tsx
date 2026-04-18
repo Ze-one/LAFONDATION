@@ -18,10 +18,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "LAFONDATION | Officiel FECAFOOT",
-    template: "%s | FECAFOOT",
+    default: "LAFONDATION | Officiel SAMUEL ET'00",
+    template: "%s | SAMUEL ET'00",
   },
-  description: "Bienvenue à la fondation FECAFOOT - Plateforme de gestion et d'inscription",
+  description: "Bienvenue à la fondation SAMUEL ET'00 - Plateforme de gestion et d'inscription",
   verification: {
     google: "gmxRo3fnXDLAGU_pQ_gjdN0g1h8NS0F6_6OCGQPeusY",
   },
@@ -30,22 +30,22 @@ export const metadata: Metadata = {
     type: "website",
     locale: "fr_FR",
     url: "https://lafondation.vercel.app",
-    siteName: "LAFONDATION FECAFOOT",
-    title: "LAFONDATION | Officiel FECAFOOT",
-    description: "Bienvenue à la fondation FECAFOOT - Plateforme de gestion et d'inscription",
+    siteName: "LAFONDATION SAMUEL ET'00",
+    title: "LAFONDATION | Officiel SAMUEL ET'00",
+    description: "Bienvenue à la fondation SAMUEL ET'00 - Plateforme de gestion et d'inscription",
     images: [
       {
         url: "/images/logo-primary.png.jfif",
         width: 1200,
         height: 630,
-        alt: "LAFONDATION FECAFOOT Logo",
+        alt: "LAFONDATION SAMUEL ET'00 Logo",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "LAFONDATION | Officiel FECAFOOT",
-    description: "Bienvenue à la fondation FECAFOOT - Plateforme de gestion et d'inscription",
+    title: "LAFONDATION | Officiel SAMUEL ET'00",
+    description: "Bienvenue à la fondation SAMUEL ET'00 - Plateforme de gestion et d'inscription",
     images: ["/images/logo-primary.png.jfif"],
   },
   icons: {
