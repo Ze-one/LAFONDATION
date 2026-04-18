@@ -24,34 +24,45 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const email = credentials?.email?.trim().toLowerCase();
-        const password = credentials?.password;
-        if (!email || !password) return null;
+        try {
+          const email = credentials?.email?.trim().toLowerCase();
+          const password = credentials?.password;
+          if (!email || !password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email },
-          select: {
-            id: true,
-            email: true,
-            password: true,
-            fullName: true,
-            status: true,
-            role: true,
-          },
-        });
-        if (!user) return null;
+          const user = await prisma.user.findUnique({
+            where: { email },
+            select: {
+              id: true,
+              email: true,
+              password: true,
+              fullName: true,
+              status: true,
+              role: true,
+            },
+          });
+          if (!user) {
+            console.error("AUTH_ERROR: User not found", email);
+            return null;
+          }
 
-        const matches = await bcrypt.compare(password, user.password);
-        if (!matches) return null;
+          const matches = await bcrypt.compare(password, user.password);
+          if (!matches) {
+            console.error("AUTH_ERROR: Password mismatch", email);
+            return null;
+          }
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.fullName,
-          fullName: user.fullName,
-          status: user.status,
-          role: user.role,
-        };
+return {
+            id: user.id,
+            email: user.email,
+            name: user.fullName,
+            fullName: user.fullName,
+            status: user.status,
+            role: user.role,
+          };
+        } catch (error) {
+          console.error("AUTH_ERROR: Exception in authorize:", error);
+          return null;
+        }
       },
     }),
   ],
