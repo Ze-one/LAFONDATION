@@ -15,10 +15,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
   
+  if (pathname === "/api/auth/callback/credentials") {
+    return NextResponse.next();
+  }
+  
   const token = await getToken({ req: request, secret });
 
   if (!token) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   if (pathname.startsWith("/admin") && token.role !== "ADMIN") {
@@ -29,5 +35,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*", "/admin", "/dashboard"],
+  matcher: ["/((?!api|_next|favicon.ico|sitemap.xml).*)"],
 };

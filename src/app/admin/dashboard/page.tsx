@@ -6,6 +6,8 @@ import { AdminDashboardContent } from "@/components/admin/admin-dashboard-conten
 import { ChatWrapper } from "@/components/chat/chat-wrapper";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Administration",
   description: "Tableau de bord administrateur SAMUEL ET'00 - Gestion des utilisateurs et documents.",
