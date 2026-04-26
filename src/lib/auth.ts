@@ -3,14 +3,7 @@ import { Role, Status } from "@prisma/client";
 import type { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
-
-const nextAuthSecret =
-  process.env.NEXTAUTH_SECRET ??
-  (process.env.NODE_ENV === "development" ? "dev-only-nextauth-secret-change-me" : undefined);
-
-if (!nextAuthSecret) {
-  throw new Error("NEXTAUTH_SECRET is required in production.");
-}
+import { nextAuthSecret } from "@/lib/auth-secret";
 
 export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt", maxAge: 24 * 60 * 60 },

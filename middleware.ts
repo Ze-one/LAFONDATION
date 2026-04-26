@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
-
-const secret = process.env.NEXTAUTH_SECRET ?? "MaFondationSecurisee2026!@#SuperSecret";
+import { nextAuthSecret } from "@/lib/auth-secret";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -19,7 +18,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
   
-  const token = await getToken({ req: request, secret });
+  const token = await getToken({ req: request, secret: nextAuthSecret });
 
   if (!token) {
     const loginUrl = new URL("/login", request.url);
