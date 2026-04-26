@@ -23,22 +23,30 @@ export function LoginForm() {
     setError("");
     setLoading(true);
 
-    const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
-    const result = await signIn("credentials", {
-      email: email.trim().toLowerCase(),
-      password,
-      callbackUrl,
-      redirect: false,
-    });
+    const callbackFromQuery = searchParams.get("callbackUrl");
+    const callbackUrl =
+      callbackFromQuery && callbackFromQuery.startsWith("/") ? callbackFromQuery : "/dashboard";
 
-    if (result?.error) {
-      setError("Email or password is incorrect.");
+    try {
+      const result = await signIn("credentials", {
+        email: email.trim().toLowerCase(),
+        password,
+        callbackUrl,
+        redirect: false,
+      });
+
+      if (result?.error || !result?.ok) {
+        setError("Email or password is incorrect.");
+        setLoading(false);
+        return;
+      }
+
+      router.push(result.url || callbackUrl);
+      router.refresh();
+    } catch {
+      setError("Unable to sign in right now. Please try again.");
       setLoading(false);
-      return;
     }
-
-    router.push(result?.url || callbackUrl);
-    router.refresh();
   }
 
   return (

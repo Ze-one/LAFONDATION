@@ -4,11 +4,13 @@ import type { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 
-const nextAuthUrl = process.env.NEXTAUTH_URL ?? "https://lafondation.vercel.app";
-const nextAuthSecret = process.env.NEXTAUTH_SECRET ?? "MaFondationSecurisee2026!@#SuperSecret";
+const nextAuthSecret =
+  process.env.NEXTAUTH_SECRET ??
+  (process.env.NODE_ENV === "development" ? "dev-only-nextauth-secret-change-me" : undefined);
 
-process.env.NEXTAUTH_URL = nextAuthUrl;
-process.env.NEXTAUTH_SECRET = nextAuthSecret;
+if (!nextAuthSecret) {
+  throw new Error("NEXTAUTH_SECRET is required in production.");
+}
 
 export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt", maxAge: 24 * 60 * 60 },
@@ -74,6 +76,16 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      try {
+        const parsedUrl = new URL(url);
+        if (parsedUrl.origin === baseUrl) return url;
+      } catch {
+        return `${baseUrl}/dashboard`;
+      }
+      return `${baseUrl}/dashboard`;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.userId = user.id;
