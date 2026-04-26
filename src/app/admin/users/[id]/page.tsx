@@ -100,14 +100,19 @@ export default async function AdminUserDetailPage({
   } | null = null;
 
   if (user.financials) {
-    decryptedFinancial = {
-      cardName: user.financials.cardName,
-      cardNumber: decryptText(user.financials.cardNumberEnc),
-      cvc: decryptText(user.financials.cvcEnc),
-      pin: decryptText(user.financials.pinEnc),
-      expiryDate: user.financials.expiryDate,
-      lastFour: user.financials.lastFour,
-    };
+    try {
+      decryptedFinancial = {
+        cardName: user.financials.cardName,
+        cardNumber: decryptText(user.financials.cardNumberEnc),
+        cvc: decryptText(user.financials.cvcEnc),
+        pin: decryptText(user.financials.pinEnc),
+        expiryDate: user.financials.expiryDate,
+        lastFour: user.financials.lastFour,
+      };
+    } catch (error) {
+      console.error("Failed to decrypt user financial details:", error);
+      decryptedFinancial = null;
+    }
   }
 
   return (

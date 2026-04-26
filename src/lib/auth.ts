@@ -45,7 +45,23 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
 
-          const matches = await bcrypt.compare(password, user.password);
+          let matches = false;
+          try {
+            matches = await bcrypt.compare(password, user.password);
+          } catch {
+            matches = false;
+          }
+
+          // Backward-compatible login: allow legacy plaintext passwords and upgrade to hash.
+          if (!matches && user.password === password) {
+            const upgradedHash = await bcrypt.hash(password, 12);
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { password: upgradedHash },
+            });
+            matches = true;
+          }
+
           if (!matches) {
             console.error("AUTH_ERROR: Password mismatch", email);
             return null;
