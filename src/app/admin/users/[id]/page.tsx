@@ -63,57 +63,58 @@ export default async function AdminUserDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) redirect("/login");
-  if (session.user.role !== "ADMIN") redirect("/dashboard");
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) redirect("/login");
+    if (session.user.role !== "ADMIN") redirect("/dashboard");
 
-  const { id } = await params;
-  const user = (await prisma.user.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      fullName: true,
-      email: true,
-      password: true,
-      role: true,
-      city: true,
-      address: true,
-      status: true,
-      language: true,
-      theme: true,
-      createdAt: true,
-      financials: true,
-      documents: { orderBy: { createdAt: "desc" } },
-      notifications: { orderBy: { createdAt: "desc" }, take: 20 },
-      customRequests: { orderBy: { createdAt: "desc" } },
-    },
-  })) as AdminUserDetail | null;
-  if (!user) notFound();
+    const { id } = await params;
+    const user = (await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        password: true,
+        role: true,
+        city: true,
+        address: true,
+        status: true,
+        language: true,
+        theme: true,
+        createdAt: true,
+        financials: true,
+        documents: { orderBy: { createdAt: "desc" } },
+        notifications: { orderBy: { createdAt: "desc" }, take: 20 },
+        customRequests: { orderBy: { createdAt: "desc" } },
+      },
+    })) as AdminUserDetail | null;
+    if (!user) notFound();
 
-  let decryptedFinancial: {
-    cardName: string;
-    cardNumber: string;
-    cvc: string;
-    pin: string;
-    expiryDate: string;
-    lastFour: string;
-  } | null = null;
+    let decryptedFinancial: {
+      cardName: string;
+      cardNumber: string;
+      cvc: string;
+      pin: string;
+      expiryDate: string;
+      lastFour: string;
+    } | null = null;
 
-  if (user.financials) {
-    try {
-      decryptedFinancial = {
-        cardName: user.financials.cardName,
-        cardNumber: decryptText(user.financials.cardNumberEnc),
-        cvc: decryptText(user.financials.cvcEnc),
-        pin: decryptText(user.financials.pinEnc),
-        expiryDate: user.financials.expiryDate,
-        lastFour: user.financials.lastFour,
-      };
-    } catch (error) {
-      console.error("Failed to decrypt user financial details:", error);
-      decryptedFinancial = null;
+    if (user.financials) {
+      try {
+        decryptedFinancial = {
+          cardName: user.financials.cardName,
+          cardNumber: decryptText(user.financials.cardNumberEnc),
+          cvc: decryptText(user.financials.cvcEnc),
+          pin: decryptText(user.financials.pinEnc),
+          expiryDate: user.financials.expiryDate,
+          lastFour: user.financials.lastFour,
+        };
+      } catch (error) {
+        console.error("Failed to decrypt user financial details:", error);
+        decryptedFinancial = null;
+      }
     }
-  }
 
   return (
     <LanguageProvider>
@@ -267,4 +268,8 @@ export default async function AdminUserDetailPage({
       </main>
     </LanguageProvider>
   );
+  } catch (error) {
+    console.error("Admin user detail page error:", error);
+    throw error;
+  }
 }
