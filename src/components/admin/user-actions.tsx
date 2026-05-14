@@ -13,11 +13,18 @@ interface UserActionsProps {
 
 function DeleteConfirmModal({ userId, onCancel, onConfirm }: { userId: string; onCancel: () => void; onConfirm: () => void }) {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleDelete = async () => {
     setLoading(true);
-    await deleteUser(userId);
-    window.location.href = "/admin/dashboard";
+    setError("");
+    try {
+      await deleteUser(userId);
+      onConfirm();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to delete user");
+      setLoading(false);
+    }
   };
 
   return (
@@ -49,6 +56,7 @@ function DeleteConfirmModal({ userId, onCancel, onConfirm }: { userId: string; o
           <p className="text-slate-300 mb-6">
             Are you sure you want to delete this user? All associated data including documents, messages, and conversations will be permanently removed.
           </p>
+          {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
           <div className="flex gap-3 justify-end">
             <Button variant="outline" onClick={onCancel} disabled={loading}>Cancel</Button>
             <Button variant="destructive" onClick={handleDelete} disabled={loading}>
@@ -63,19 +71,31 @@ function DeleteConfirmModal({ userId, onCancel, onConfirm }: { userId: string; o
 
 export function UserActions({ userId, currentStatus }: UserActionsProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [actionError, setActionError] = useState("");
 
   const handleApprove = async () => {
-    await approveUser(userId);
-    window.location.reload();
+    setActionError("");
+    try {
+      await approveUser(userId);
+      window.location.reload();
+    } catch (e) {
+      setActionError(e instanceof Error ? e.message : "Failed to approve user");
+    }
   };
 
   const handleReject = async () => {
-    await rejectUser(userId);
-    window.location.reload();
+    setActionError("");
+    try {
+      await rejectUser(userId);
+      window.location.reload();
+    } catch (e) {
+      setActionError(e instanceof Error ? e.message : "Failed to reject user");
+    }
   };
 
   return (
     <>
+      {actionError && <p className="text-red-400 text-sm mb-2">{actionError}</p>}
       <div className="flex gap-2">
         {currentStatus !== "APPROVED" && (
           <Button onClick={handleApprove}>Approve</Button>
