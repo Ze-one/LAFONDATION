@@ -12,6 +12,7 @@ declare module "next-auth" {
   }
 
   interface User {
+    id: string;
     fullName?: string;
     status?: Status;
     role?: Role;

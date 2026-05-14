@@ -3,6 +3,7 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -12,11 +13,23 @@ import { useLanguage } from "@/lib/language-context";
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: session, status } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { t } = useLanguage();
+
+  if (status === "authenticated" && session?.user) {
+    if (session.user.role === "ADMIN") {
+      router.push("/admin/dashboard");
+    } else if (session.user.status !== "APPROVED") {
+      router.push("/pending");
+    } else {
+      router.push("/dashboard");
+    }
+    return null;
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -41,7 +54,6 @@ export function LoginForm() {
         return;
       }
 
-      router.push(result.url || callbackUrl);
       router.refresh();
     } catch {
       setError("Unable to sign in right now. Please try again.");

@@ -26,6 +26,10 @@ export default async function DashboardPage() {
       redirect("/admin/dashboard");
     }
 
+    if (session.user.status !== "APPROVED") {
+      redirect("/pending");
+    }
+
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       include: {

@@ -17,7 +17,7 @@ export async function middleware(request: NextRequest) {
   if (pathname === "/api/auth/callback/credentials") {
     return NextResponse.next();
   }
-  
+
   const token = await getToken({ req: request, secret: nextAuthSecret });
 
   if (!token) {
@@ -28,6 +28,10 @@ export async function middleware(request: NextRequest) {
 
   if (pathname.startsWith("/admin") && token.role !== "ADMIN") {
     return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  if (pathname.startsWith("/dashboard") && token.status !== "APPROVED") {
+    return NextResponse.redirect(new URL("/pending", request.url));
   }
 
   return NextResponse.next();
