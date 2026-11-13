@@ -101,6 +101,18 @@ export const authOptions: NextAuthOptions = {
         token.fullName = user.fullName ?? user.name ?? "";
         token.status = user.status ?? "PENDING";
         token.role = user.role ?? "USER";
+      } else if (token.userId) {
+        // Keep role and approval state current after an admin changes them.
+        // Existing sessions should not require a logout/login cycle.
+        const currentUser = await prisma.user.findUnique({
+          where: { id: String(token.userId) },
+          select: { fullName: true, status: true, role: true },
+        });
+        if (currentUser) {
+          token.fullName = currentUser.fullName;
+          token.status = currentUser.status;
+          token.role = currentUser.role;
+        }
       }
       return token;
     },

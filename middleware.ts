@@ -30,10 +30,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  if (pathname.startsWith("/dashboard") && token.status !== "APPROVED") {
-    return NextResponse.redirect(new URL("/pending", request.url));
-  }
-
   return NextResponse.next();
 }
 

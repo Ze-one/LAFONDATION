@@ -26,10 +26,6 @@ export default async function DashboardPage() {
       redirect("/admin/dashboard");
     }
 
-    if (session.user.status !== "APPROVED") {
-      redirect("/pending");
-    }
-
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       include: {
@@ -41,6 +37,12 @@ export default async function DashboardPage() {
 
     if (!user) {
       redirect("/login");
+    }
+
+    // Read the current database status instead of relying on a potentially
+    // stale JWT issued before an admin approved the application.
+    if (user.status !== "APPROVED") {
+      redirect("/pending");
     }
 
     const otherDocs = user.documents.filter((d) => d.type === DocType.OTHER).map((d) => ({

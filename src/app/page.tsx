@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { ArrowRight, Heart, ShieldCheck, Sparkles, Users, WalletCards } from "lucide-react";
+import { LanguageToggle } from "@/components/language-toggle";
+import { useLanguage } from "@/lib/language-context";
 
 const programs = [
   { icon: Heart, title: "Emergency aid", copy: "Fast, dignified support for families navigating an unexpected crisis." },
@@ -10,6 +12,14 @@ const programs = [
 ];
 
 export default function Home() {
+  const { language } = useLanguage();
+  const copy = language === "fr" ? {
+    mission: "Notre mission", programs: "Programmes", impact: "Impact", login: "Connexion", apply: "Demander une aide",
+    eyebrow: "Un soutien qui fait avancer", title: "Un avenir plus fort commence par le soutien.", description: "LAFONDATION relie les familles, les jeunes entrepreneurs et les communautés à des financements transparents et des programmes concrets.", start: "Commencer ma demande", discover: "Découvrir notre action", impactTitle: "Nous avons déjà accompli", help: "Comment pouvez-vous aider ?"
+  } : {
+    mission: "Our mission", programs: "Programs", impact: "Impact", login: "Login", apply: "Apply for support",
+    eyebrow: "Aid that moves people forward", title: "A stronger future starts with support.", description: "LAFONDATION connects families, young entrepreneurs, and communities with transparent funding and practical programs.", start: "Start your application", discover: "Discover our work", impactTitle: "We've reached so far", help: "How can you help?"
+  };
   return (
     <main className="min-h-dvh bg-[#fbfbf8] text-[#171717]">
       <header className="absolute inset-x-0 top-0 z-20 border-b border-white/15 bg-[#171717]/90 text-white backdrop-blur-md">
@@ -19,13 +29,14 @@ export default function Home() {
             LAFONDATION
           </Link>
           <nav className="hidden items-center gap-8 text-xs font-medium text-white/65 md:flex">
-            <a href="#mission" className="hover:text-white">Our mission</a>
-            <a href="#programs" className="hover:text-white">Programs</a>
-            <a href="#impact" className="hover:text-white">Impact</a>
-            <Link href="/login" className="hover:text-white">Login</Link>
-            <Link href="/register" className="rounded-full bg-[#f6e900] px-5 py-2.5 font-bold text-[#171717] transition hover:bg-white">Apply for support</Link>
+            <a href="#mission" className="hover:text-white">{copy.mission}</a>
+            <a href="#programs" className="hover:text-white">{copy.programs}</a>
+            <a href="#impact" className="hover:text-white">{copy.impact}</a>
+            <Link href="/login" className="hover:text-white">{copy.login}</Link>
+            <LanguageToggle />
+            <Link href="/register" className="rounded-full bg-[#f6e900] px-5 py-2.5 font-bold text-[#171717] transition hover:bg-white">{copy.apply}</Link>
           </nav>
-          <Link href="/register" className="rounded-full bg-[#f6e900] px-4 py-2 text-xs font-bold text-[#171717] md:hidden">Apply</Link>
+          <div className="flex items-center gap-2 md:hidden"><LanguageToggle /><Link href="/register" className="rounded-full bg-[#f6e900] px-4 py-2 text-xs font-bold text-[#171717]">{copy.apply}</Link></div>
         </div>
       </header>
 
@@ -34,12 +45,12 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/10" />
         <div className="relative mx-auto w-full max-w-7xl px-5 py-24 lg:px-10">
           <div className="max-w-2xl">
-            <p className="mb-5 text-sm font-bold uppercase tracking-[0.3em] text-[#f6e900]">Aid that moves people forward</p>
-            <h1 className="max-w-xl text-5xl font-black uppercase leading-[0.95] tracking-tight sm:text-7xl">A stronger future starts with support.</h1>
-            <p className="mt-7 max-w-lg text-base leading-7 text-white/80 sm:text-lg">LAFONDATION connects families, young entrepreneurs, and communities with transparent funding, practical programs, and a team that stays close to every journey.</p>
+            <p className="mb-5 text-sm font-bold uppercase tracking-[0.3em] text-[#f6e900]">{copy.eyebrow}</p>
+            <h1 className="max-w-xl text-5xl font-black uppercase leading-[0.95] tracking-tight sm:text-7xl">{copy.title}</h1>
+            <p className="mt-7 max-w-lg text-base leading-7 text-white/80 sm:text-lg">{copy.description}</p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <Link href="/register" className="inline-flex items-center gap-2 rounded-full bg-[#f6e900] px-6 py-3.5 text-sm font-black text-[#171717] transition hover:-translate-y-0.5 hover:bg-white">Start your application <ArrowRight size={17} /></Link>
-              <a href="#mission" className="rounded-full border border-white/40 px-6 py-3.5 text-sm font-bold transition hover:border-white hover:bg-white/10">Discover our work</a>
+              <Link href="/register" className="inline-flex items-center gap-2 rounded-full bg-[#f6e900] px-6 py-3.5 text-sm font-black text-[#171717] transition hover:-translate-y-0.5 hover:bg-white">{copy.start} <ArrowRight size={17} /></Link>
+              <a href="#mission" className="rounded-full border border-white/40 px-6 py-3.5 text-sm font-bold transition hover:border-white hover:bg-white/10">{copy.discover}</a>
             </div>
           </div>
         </div>
@@ -49,7 +60,7 @@ export default function Home() {
       </section>
 
       <section id="impact" className="mx-auto max-w-6xl px-5 pb-20 pt-32 lg:px-10">
-        <div className="text-center"><p className="text-xs font-black uppercase tracking-[0.25em] text-[#9c9200]">Our impact</p><h2 className="mt-3 text-3xl font-black uppercase sm:text-4xl">We&apos;ve reached so far</h2></div>
+        <div className="text-center"><p className="text-xs font-black uppercase tracking-[0.25em] text-[#9c9200]">{copy.impact}</p><h2 className="mt-3 text-3xl font-black uppercase sm:text-4xl">{copy.impactTitle}</h2></div>
         <div className="mt-10 grid gap-5 sm:grid-cols-3">
           {[['2,480+', 'families supported'], ['€1.8M', 'aid allocated'], ['14', 'community programs']].map(([value, label]) => <div key={label} className="rounded-2xl border border-black/10 bg-white p-7 text-center shadow-sm"><p className="text-4xl font-black tracking-tight">{value}</p><p className="mt-2 text-sm font-semibold uppercase tracking-wider text-black/50">{label}</p></div>)}
         </div>
