@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { signOut } from "next-auth/react";
 import { User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LanguageToggle } from "@/components/language-toggle";
 
 interface ProfileMenuProps {
   userName?: string;
@@ -40,6 +41,10 @@ export function ProfileMenu({ userName = "User", userRole = "USER" }: ProfileMen
           <div className="border-b border-slate-700 pb-2 mb-2 px-2">
             <p className="text-sm font-medium text-white">{userName}</p>
             <p className="text-xs text-slate-400">{userRole}</p>
+          </div>
+          <div className="flex items-center justify-between px-2 pb-2">
+            <span className="text-xs text-slate-400">Language / Langue</span>
+            <LanguageToggle />
           </div>
           <Button
             variant="ghost"

@@ -57,10 +57,10 @@ export default function Home() {
         </div>
       </header>
 
-      <section className="relative isolate flex min-h-[680px] items-center overflow-hidden bg-[#161616] pt-16 text-white">
+      <section className="relative isolate min-h-[680px] overflow-visible bg-[#161616] pt-16 text-white">
         <motion.div initial={{ scale: 1.08 }} animate={{ scale: 1 }} transition={{ duration: 1.4, ease: "easeOut" }} className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=2200&q=85')] bg-cover bg-center" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/10" />
-        <div className="relative mx-auto w-full max-w-7xl px-5 py-24 lg:px-10">
+        <div className="relative mx-auto flex min-h-[620px] w-full max-w-7xl items-center px-5 py-24 lg:px-10">
           <div className="max-w-2xl">
             <p className="mb-5 text-sm font-bold uppercase tracking-[0.3em] text-[#f6e900]">{copy.eyebrow}</p>
             <h1 className="max-w-xl text-5xl font-black uppercase leading-[0.95] tracking-tight sm:text-7xl">{copy.title}</h1>
@@ -71,7 +71,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="absolute bottom-0 left-1/2 grid w-[calc(100%-2.5rem)] max-w-6xl -translate-x-1/2 translate-y-1/2 grid-cols-1 overflow-hidden rounded-2xl bg-[#f6e900] text-[#171717] shadow-2xl sm:grid-cols-3">
+        <div className="relative z-10 mx-auto -mt-14 grid w-[calc(100%-2.5rem)] max-w-6xl grid-cols-1 overflow-hidden rounded-2xl bg-[#f6e900] text-[#171717] shadow-2xl sm:grid-cols-3">
           {programs.map(({ icon: Icon, title, copy }) => <motion.div whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 260 }} key={title} className="group flex items-start gap-4 border-b border-[#171717]/10 p-5 last:border-0 sm:border-b-0 sm:border-r sm:last:border-0"><Icon size={27} strokeWidth={1.8} className="transition-transform duration-300 group-hover:rotate-[-8deg] group-hover:scale-110" /><div><p className="text-sm font-black uppercase">{title}</p><p className="mt-1 text-xs leading-5 text-[#171717]/65">{copy}</p></div></motion.div>)}
         </div>
       </section>
