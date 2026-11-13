@@ -68,9 +68,9 @@ export function DashboardContent({
   const { t } = useLanguage();
   
   return (
-    <main className="min-h-dvh bg-gradient-to-b from-secondary/40 to-background px-4 py-10 sm:py-16">
+    <main className="min-h-dvh bg-[#f1f0eb] px-4 py-10 text-[#171717] sm:py-16">
       <div className="mx-auto max-w-4xl space-y-6">
-        <header className="rounded-xl border bg-card p-6">
+        <header className="rounded-3xl bg-[#171717] p-6 text-white shadow-xl">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-2xl font-bold">{t("welcome")}, {user.fullName} 👋</h1>
@@ -89,7 +89,7 @@ export function DashboardContent({
         </header>
 
         <div className="grid gap-6">
-          <Card className="border-2 border-blue-500 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
+          <Card className="border-black/10 bg-[#fbfbf8] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#f6e900] hover:shadow-xl">
             <CardHeader>
               <CardTitle>{t("downloadReceipt")}</CardTitle>
               <CardDescription>
@@ -97,7 +97,7 @@ export function DashboardContent({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button asChild>
+              <Button asChild className="bg-[#f6e900] text-[#171717] hover:bg-[#171717] hover:text-white">
                 <a href="/api/receipt" download>
                   {t("download")} (.pdf)
                 </a>
@@ -105,7 +105,7 @@ export function DashboardContent({
             </CardContent>
           </Card>
 
-          <Card className="transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
+          <Card className="border-black/10 bg-[#fbfbf8] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#f6e900] hover:shadow-xl">
             <CardHeader>
               <CardTitle>{t("uploadDocumentsTitle")}</CardTitle>
               <CardDescription>

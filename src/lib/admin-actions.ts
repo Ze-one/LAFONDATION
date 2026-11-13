@@ -61,3 +61,32 @@ export async function deleteUser(userId: string) {
 
   revalidatePath("/admin/dashboard");
 }
+
+export async function overrideAidDecision(userId: string, decision: "APPROVED" | "REJECTED") {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id || session.user.role !== "ADMIN") throw new Error("Unauthorized");
+
+  await prisma.user.update({ where: { id: userId }, data: { status: decision } });
+  await prisma.notification.create({
+    data: {
+      userId,
+      title: "Aid decision updated",
+      message: `An administrator recorded a manual ${decision.toLowerCase()} decision for your application.`,
+    },
+  });
+  revalidatePath("/admin/dashboard");
+}
+
+export async function disburseAid(userId: string, type: "GRANT" | "LOAN" | "DONATION") {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id || session.user.role !== "ADMIN") throw new Error("Unauthorized");
+
+  await prisma.notification.create({
+    data: {
+      userId,
+      title: `${type} disbursement queued`,
+      message: `Your ${type.toLowerCase()} has been queued for payout review by LAFONDATION.`,
+    },
+  });
+  revalidatePath("/admin/dashboard");
+}

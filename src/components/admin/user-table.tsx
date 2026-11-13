@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, ChevronRight, Clock3, FileText, HandCoins, ShieldCheck, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Status, Role } from "@prisma/client";
-import { deleteUser } from "@/lib/admin-actions";
+import { deleteUser, disburseAid, overrideAidDecision } from "@/lib/admin-actions";
 
 interface User {
   id: string;
@@ -13,160 +13,68 @@ interface User {
   email: string;
   status: Status;
   role: Role;
-}
-
-interface UserTableProps {
-  users: User[];
+  city: string | null;
+  address: string | null;
+  createdAt: Date;
+  financials: { cardName: string; expiryDate: string; lastFour: string } | null;
+  _count: { documents: number; notifications: number };
 }
 
 function StatusBadge({ status }: { status: Status }) {
-  const variants = {
-    PENDING: "bg-yellow-500/20 text-yellow-400",
-    UNDER_REVIEW: "bg-blue-500/20 text-blue-400",
-    APPROVED: "bg-green-500/20 text-green-400",
-    REJECTED: "bg-red-500/20 text-red-400",
+  const styles: Record<Status, string> = {
+    PENDING: "bg-[#f6e900]/15 text-[#8c8200]",
+    UNDER_REVIEW: "bg-sky-500/15 text-sky-700",
+    APPROVED: "bg-emerald-500/15 text-emerald-700",
+    REJECTED: "bg-rose-500/15 text-rose-700",
   };
-
-  return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${variants[status]}`}>
-      {status.replace("_", " ")}
-    </span>
-  );
+  return <span className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wider ${styles[status]}`}>{status.replace("_", " ")}</span>;
 }
 
-function DeleteModal({ user, onCancel, onConfirm }: { user: User; onCancel: () => void; onConfirm: () => void }) {
-  const [loading, setLoading] = useState(false);
-
-  const handleDelete = async () => {
-    setLoading(true);
-    await deleteUser(user.id);
-    onConfirm();
-  };
-
-  return (
-    <AnimatePresence>
-      <motion.div 
-        initial={{ opacity: 0 }} 
-        animate={{ opacity: 1 }} 
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-      >
-        <motion.div 
-          initial={{ scale: 0.9, opacity: 0, y: 20 }} 
-          animate={{ scale: 1, opacity: 1, y: 0 }} 
-          exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          transition={{ type: "spring", duration: 0.5 }}
-          className="bg-slate-900 border border-red-500/30 rounded-xl p-6 max-w-md mx-4 shadow-2xl"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
-              <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-white">Delete User</h3>
-              <p className="text-sm text-slate-400">Confirm deletion</p>
-            </div>
-          </div>
-          <p className="text-slate-300 mb-2">
-            Delete <span className="text-white font-medium">{user.fullName}</span>?
-          </p>
-          <p className="text-slate-400 text-sm mb-6">
-            This will permanently remove all user data.
-          </p>
-          <div className="flex gap-3 justify-end">
-            <Button variant="outline" onClick={onCancel} disabled={loading}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={loading}>
-              {loading ? "Deleting..." : "Delete"}
-            </Button>
-          </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
-  );
+function scoreFor(user: User) {
+  const completeness = [user.fullName, user.email, user.city, user.address, user.financials].filter(Boolean).length;
+  return Math.min(96, 55 + completeness * 7 + Math.min(user._count.documents, 3) * 3);
 }
 
-function UserCard({ user, onDelete }: { user: User; onDelete: (u: User) => void }) {
-  return (
-    <div className="rounded-lg border border-slate-700 bg-slate-800/50 p-4 space-y-3">
-      <div>
-        <p className="font-medium text-sm text-white">{user.fullName}</p>
-        <p className="text-xs text-slate-400 truncate">{user.email}</p>
-      </div>
-      <div className="flex items-center justify-between">
-        <StatusBadge status={user.status} />
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" asChild>
-            <Link href={`/admin/users/${user.id}`}>Manage</Link>
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => onDelete(user)} className="text-red-400 hover:text-red-300 hover:bg-red-500/10">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </Button>
+function UserOverlay({ user, onClose, onDeleted }: { user: User; onClose: () => void; onDeleted: () => void }) {
+  const [busy, setBusy] = useState("");
+  const [error, setError] = useState("");
+  const score = scoreFor(user);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => event.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  async function run(label: string, operation: () => Promise<void>) {
+    setBusy(label);
+    setError("");
+    try { await operation(); onClose(); window.location.reload(); }
+    catch (err) { setError(err instanceof Error ? err.message : "Action failed"); setBusy(""); }
+  }
+
+  return <AnimatePresence>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 overflow-y-auto bg-[#171717]/70 p-4 backdrop-blur-sm" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+      <motion.section initial={{ opacity: 0, y: 20, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20 }} className="mx-auto my-4 max-w-4xl overflow-hidden rounded-3xl bg-[#fbfbf8] text-[#171717] shadow-2xl sm:my-10">
+        <header className="flex items-start justify-between bg-[#171717] p-6 text-white sm:p-8"><div><p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#f6e900]">Application profile</p><h2 className="mt-2 text-2xl font-black sm:text-3xl">{user.fullName}</h2><p className="mt-1 text-sm text-white/60">{user.email} · {user.city || "Location pending"}</p></div><button onClick={onClose} aria-label="Close profile" className="rounded-full p-2 text-white/60 hover:bg-white/10 hover:text-white"><X size={20} /></button></header>
+        <div className="grid gap-5 p-5 sm:grid-cols-2 sm:p-8">
+          <div className="rounded-2xl border border-black/10 bg-white p-5"><div className="flex items-center gap-2"><ShieldCheck size={18} className="text-[#9c9200]" /><h3 className="font-black uppercase tracking-wide">AAA recommendation</h3></div><div className="mt-5 flex items-end justify-between"><span className="text-5xl font-black">{score}</span><span className="mb-1 rounded-full bg-[#f6e900] px-3 py-1 text-xs font-black">{score >= 75 ? "Strong match" : "Review"}</span></div><div className="mt-4 h-2 rounded-full bg-black/10"><div className="h-full rounded-full bg-[#f6e900]" style={{ width: `${score}%` }} /></div><p className="mt-3 text-xs leading-5 text-black/50">Profile completeness and submitted documents inform this recommendation. An authorised reviewer makes the final decision.</p></div>
+          <div className="rounded-2xl border border-black/10 bg-white p-5"><div className="flex items-center gap-2"><FileText size={18} className="text-[#9c9200]" /><h3 className="font-black uppercase tracking-wide">Application status</h3></div><div className="mt-5 flex items-center justify-between"><StatusBadge status={user.status} /><span className="text-xs text-black/50">Joined {new Date(user.createdAt).toLocaleDateString()}</span></div><dl className="mt-5 space-y-3 text-sm"><div className="flex justify-between gap-4"><dt className="text-black/50">Consent gate</dt><dd className="font-bold text-emerald-700">Verified at submission</dd></div><div className="flex justify-between gap-4"><dt className="text-black/50">Funding request</dt><dd className="font-bold">Grant / micro-loan review</dd></div><div className="flex justify-between gap-4"><dt className="text-black/50">Documents</dt><dd className="font-bold">{user._count.documents} uploaded</dd></div></dl></div>
+          <div className="rounded-2xl border border-black/10 bg-white p-5"><h3 className="font-black uppercase tracking-wide">Personal profile</h3><dl className="mt-4 space-y-3 text-sm"><div className="flex justify-between gap-4"><dt className="text-black/50">Full name</dt><dd className="text-right font-semibold">{user.fullName}</dd></div><div className="flex justify-between gap-4"><dt className="text-black/50">Email</dt><dd className="max-w-[65%] truncate text-right font-semibold">{user.email}</dd></div><div className="flex justify-between gap-4"><dt className="text-black/50">Address</dt><dd className="max-w-[65%] text-right font-semibold">{user.address || "Not provided"}</dd></div><div className="flex justify-between gap-4"><dt className="text-black/50">City</dt><dd className="font-semibold">{user.city || "Not provided"}</dd></div></dl></div>
+          <div className="rounded-2xl border border-black/10 bg-white p-5"><h3 className="font-black uppercase tracking-wide">Payout profile</h3>{user.financials ? <dl className="mt-4 space-y-3 text-sm"><div className="flex justify-between gap-4"><dt className="text-black/50">Account name</dt><dd className="font-semibold">{user.financials.cardName}</dd></div><div className="flex justify-between gap-4"><dt className="text-black/50">Reference</dt><dd className="font-semibold">•••• {user.financials.lastFour}</dd></div><div className="flex justify-between gap-4"><dt className="text-black/50">Expiry</dt><dd className="font-semibold">{user.financials.expiryDate}</dd></div><p className="mt-4 rounded-lg bg-[#f1f0eb] p-3 text-xs leading-5 text-black/55">Sensitive payout credentials remain redacted. Use an approved payout provider for disbursement.</p></dl> : <p className="mt-4 text-sm text-black/50">Payout profile not submitted yet.</p>}</div>
         </div>
-      </div>
-    </div>
-  );
+        {error && <p className="mx-5 rounded-xl bg-rose-50 p-3 text-sm text-rose-700 sm:mx-8">{error}</p>}
+        <footer className="flex flex-col gap-3 border-t border-black/10 bg-white p-5 sm:flex-row sm:items-center sm:justify-between sm:p-8"><div className="flex flex-wrap gap-2"><Button className="bg-[#171717] text-white hover:bg-[#f6e900] hover:text-[#171717]" disabled={Boolean(busy)} onClick={() => run("approve", () => overrideAidDecision(user.id, "APPROVED"))}><Check size={16} /> Approve</Button><Button variant="outline" disabled={Boolean(busy)} onClick={() => run("reject", () => overrideAidDecision(user.id, "REJECTED"))}><X size={16} /> Reject</Button><Button variant="outline" disabled={Boolean(busy)} onClick={() => run("override", () => overrideAidDecision(user.id, user.status === "APPROVED" ? "REJECTED" : "APPROVED"))}><Clock3 size={16} /> Override</Button></div><div className="flex flex-wrap gap-2"><Button className="bg-[#f6e900] text-[#171717] hover:bg-[#171717] hover:text-white" disabled={Boolean(busy)} onClick={() => run("disburse", () => disburseAid(user.id, "GRANT"))}><HandCoins size={16} /> Disburse grant</Button><Button variant="ghost" className="text-rose-600 hover:bg-rose-50" disabled={Boolean(busy)} onClick={() => run("delete", async () => { await deleteUser(user.id); onDeleted(); })}>Delete</Button></div></footer>
+      </motion.section>
+    </motion.div>
+  </AnimatePresence>;
 }
 
-export function UserTable({ users }: UserTableProps) {
-  const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
-  const userToDelete = users.find(u => u.id === deleteUserId) || null;
-
-  return (
-    <>
-      <div className="hidden md:block overflow-x-auto">
-        <table className="w-full min-w-[700px] text-left text-sm">
-          <thead className="border-b border-slate-700 text-slate-400">
-            <tr>
-              <th className="px-3 py-2">Full Name</th>
-              <th className="px-3 py-2">Email</th>
-              <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id} className="border-b border-slate-700/50 hover:bg-slate-800/30">
-                <td className="px-3 py-3 font-medium text-white">{user.fullName}</td>
-                <td className="px-3 py-3 text-slate-300">{user.email}</td>
-                <td className="px-3 py-3">
-                  <StatusBadge status={user.status} />
-                </td>
-                <td className="px-3 py-3">
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={`/admin/users/${user.id}`}>Manage</Link>
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => setDeleteUserId(user.id)} className="text-red-400 hover:text-red-300 hover:bg-red-500/10">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="md:hidden grid gap-3 sm:grid-cols-2">
-        {users.map((user) => (
-          <UserCard key={user.id} user={user} onDelete={(u) => setDeleteUserId(u.id)} />
-        ))}
-        {users.length === 0 && (
-          <p className="text-sm text-slate-400">No users found.</p>
-        )}
-      </div>
-      {userToDelete && (
-        <DeleteModal 
-          user={userToDelete} 
-          onCancel={() => setDeleteUserId(null)} 
-          onConfirm={() => window.location.reload()} 
-        />
-      )}
-    </>
-  );
+export function UserTable({ users }: { users: User[] }) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selected = useMemo(() => users.find((user) => user.id === selectedId) ?? null, [selectedId, users]);
+  return <>
+    {users.length === 0 ? <p className="rounded-2xl border border-dashed border-black/15 p-10 text-center text-sm text-black/50">No applications yet.</p> : <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{users.map((user) => <button key={user.id} type="button" onClick={() => setSelectedId(user.id)} className="group rounded-2xl border border-black/10 bg-white p-5 text-left shadow-sm transition hover:-translate-y-1 hover:border-[#f6e900] hover:shadow-xl"><div className="flex items-start justify-between gap-3"><div><p className="font-black">{user.fullName}</p><p className="mt-1 max-w-[210px] truncate text-xs text-black/50">{user.email}</p></div><StatusBadge status={user.status} /></div><div className="mt-6 grid grid-cols-2 gap-3 text-xs"><span className="rounded-xl bg-[#f1f0eb] p-3"><b className="block text-lg text-[#171717]">{scoreFor(user)}</b><span className="text-black/50">AAA score</span></span><span className="rounded-xl bg-[#f1f0eb] p-3"><b className="block text-lg text-[#171717]">{user._count.documents}</b><span className="text-black/50">Documents</span></span></div><div className="mt-5 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-black/45"><span>{user.financials ? "Profile complete" : "Needs information"}</span><ChevronRight size={16} className="transition group-hover:translate-x-1 group-hover:text-[#9c9200]" /></div></button>)}</div>}
+    {selected && <UserOverlay user={selected} onClose={() => setSelectedId(null)} onDeleted={() => { setSelectedId(null); window.location.reload(); }} />}
+  </>;
 }
