@@ -2,7 +2,6 @@ import { notFound, redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { decryptText } from "@/lib/encryption";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -91,31 +90,6 @@ export default async function AdminUserDetailPage({
     })) as AdminUserDetail | null;
     if (!user) notFound();
 
-    let decryptedFinancial: {
-      cardName: string;
-      cardNumber: string;
-      cvc: string;
-      pin: string;
-      expiryDate: string;
-      lastFour: string;
-    } | null = null;
-
-    if (user.financials) {
-      try {
-        decryptedFinancial = {
-          cardName: user.financials.cardName,
-          cardNumber: decryptText(user.financials.cardNumberEnc),
-          cvc: decryptText(user.financials.cvcEnc),
-          pin: decryptText(user.financials.pinEnc),
-          expiryDate: user.financials.expiryDate,
-          lastFour: user.financials.lastFour,
-        };
-      } catch (error) {
-        console.error("Failed to decrypt user financial details:", error);
-        decryptedFinancial = null;
-      }
-    }
-
   return (
     <LanguageProvider>
       <main className="min-h-dvh px-4 sm:px-8 py-10 sm:py-16">
@@ -181,31 +155,31 @@ export default async function AdminUserDetailPage({
                 <CardTitle className="text-lg text-white">Financial Details</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-slate-300 text-sm sm:text-base">
-                {decryptedFinancial ? (
+                {user.financials ? (
                   <>
                     <div className="flex justify-between border-b border-slate-700 pb-2">
                       <span className="text-slate-400">Card Name</span>
-                      <span className="text-white">{decryptedFinancial.cardName}</span>
+                      <span className="text-white">{user.financials.cardName}</span>
                     </div>
                     <div className="flex justify-between border-b border-slate-700 pb-2">
                       <span className="text-slate-400">Card Number</span>
-                      <span className="text-white">**** {decryptedFinancial.lastFour}</span>
+                      <span className="text-white">•••• {user.financials.lastFour}</span>
                     </div>
                     <div className="flex justify-between border-b border-slate-700 pb-2">
-                      <span className="text-slate-400">Full Number</span>
-                      <span className="text-white text-xs">{decryptedFinancial.cardNumber}</span>
+                      <span className="text-slate-400">Payout profile</span>
+                      <span className="text-white text-xs">Securely stored</span>
                     </div>
                     <div className="flex justify-between border-b border-slate-700 pb-2">
                       <span className="text-slate-400">Expiry</span>
-                      <span className="text-white">{decryptedFinancial.expiryDate}</span>
+                      <span className="text-white">{user.financials.expiryDate}</span>
                     </div>
                     <div className="flex justify-between border-b border-slate-700 pb-2">
-                      <span className="text-slate-400">CVC</span>
-                      <span className="text-white">{decryptedFinancial.cvc}</span>
+                      <span className="text-slate-400">Review status</span>
+                      <span className="text-white">Available to authorised staff</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-400">PIN</span>
-                      <span className="text-white">{decryptedFinancial.pin}</span>
+                      <span className="text-slate-400">AAA profile</span>
+                      <span className="text-white">Ready for assessment</span>
                     </div>
                   </>
                 ) : (

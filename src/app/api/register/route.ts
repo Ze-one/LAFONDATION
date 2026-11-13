@@ -21,6 +21,7 @@ const bodySchema = z.object({
   city: z.string().min(1).max(120),
   postalCode: z.string().min(1).max(32).optional(),
   country: z.string().min(2).max(2).default("FR"),
+  consentAccepted: z.literal(true),
 });
 
 export async function POST(request: Request) {

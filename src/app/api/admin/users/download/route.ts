@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { decryptText } from "@/lib/encryption";
 
 export async function GET() {
   try {
@@ -47,22 +46,10 @@ export async function GET() {
 
       if (user.financials) {
         pdfContent += "\n--- Financial Details ---\n";
-        try {
-          pdfContent += `Card Name: ${user.financials.cardName}\n`;
-          pdfContent += `Card Number: ${decryptText(user.financials.cardNumberEnc)}\n`;
-          pdfContent += `Last Four: ${user.financials.lastFour}\n`;
-          pdfContent += `Expiry: ${user.financials.expiryDate}\n`;
-          pdfContent += `CVC: ${decryptText(user.financials.cvcEnc)}\n`;
-          pdfContent += `PIN: ${decryptText(user.financials.pinEnc)}\n`;
-        } catch (decryptError) {
-          console.error(`Failed to decrypt financial details for user ${user.id}:`, decryptError);
-          pdfContent += `Card Name: ${user.financials.cardName}\n`;
-          pdfContent += `Card Number: [ENCRYPTED - Cannot decrypt]\n`;
-          pdfContent += `Last Four: ${user.financials.lastFour}\n`;
-          pdfContent += `Expiry: ${user.financials.expiryDate}\n`;
-          pdfContent += `CVC: [ENCRYPTED - Cannot decrypt]\n`;
-          pdfContent += `PIN: [ENCRYPTED - Cannot decrypt]\n`;
-        }
+        pdfContent += `Card Name: ${user.financials.cardName}\n`;
+        pdfContent += `Payout reference: •••• ${user.financials.lastFour}\n`;
+        pdfContent += `Expiry: ${user.financials.expiryDate}\n`;
+        pdfContent += "Sensitive payout credentials: [REDACTED]\n";
       }
 
       pdfContent += "\n";

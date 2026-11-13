@@ -63,13 +63,6 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-dvh font-sans`}
       >
-        <div 
-          className="fixed inset-0 bg-slate-950 -z-10"
-        />
-        <div 
-          className="fixed inset-0 bg-black/90 -z-10"
-          style={{ backgroundImage: 'url(/images/background.png.jfif)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', opacity: 0.4 }}
-        />
         <Providers>
           <LanguageProvider>
             <Navbar />

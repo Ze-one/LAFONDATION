@@ -18,7 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/language-context";
 
-const STEPS = ["stepIdentity", "stepLocation", "stepBankInfo"] as const;
+const STEPS = ["stepIdentity", "stepLocation", "stepBankInfo", "consent"] as const;
 
 type FormState = {
   fullName: string;
@@ -33,6 +33,7 @@ type FormState = {
   city: string;
   postalCode: string;
   country: string;
+  consentAccepted: boolean;
 };
 
 const initial: FormState = {
@@ -48,6 +49,7 @@ const initial: FormState = {
   city: "",
   postalCode: "",
   country: "FR",
+  consentAccepted: false,
 };
 
 export function RegistrationForm() {
@@ -112,6 +114,10 @@ export function RegistrationForm() {
         return false;
       }
     }
+    if (s === 3 && !form.consentAccepted) {
+      toast.error("Please review and accept the consent agreement before submitting.");
+      return false;
+    }
     return true;
   }
 
@@ -134,6 +140,7 @@ export function RegistrationForm() {
           city: form.city.trim(),
           postalCode: form.postalCode.trim() || undefined,
           country: form.country.trim().toUpperCase(),
+          consentAccepted: form.consentAccepted,
         }),
       });
       const data = await res.json();
@@ -351,6 +358,23 @@ export function RegistrationForm() {
                 </div>
               </div>
             )}
+
+            {step === 3 && (
+              <div className="space-y-5">
+                <div className="rounded-xl border border-black/10 bg-muted/40 p-4 text-sm leading-6 text-muted-foreground">
+                  Review your profile information and consent to LAFONDATION using it to assess eligibility, contact you about your application, and administer approved aid. You can request access or correction of your information through the foundation.
+                </div>
+                <label className="flex items-start gap-3 rounded-xl border border-black/10 p-4 text-sm leading-6">
+                  <input
+                    type="checkbox"
+                    className="mt-1 h-4 w-4 accent-[#f6e900]"
+                    checked={form.consentAccepted}
+                    onChange={(e) => update("consentAccepted", e.target.checked)}
+                  />
+                  <span>I have read the consent agreement and authorise LAFONDATION to process my application for AAA review.</span>
+                </label>
+              </div>
+            )}
           </>
         )}
 
@@ -376,7 +400,7 @@ export function RegistrationForm() {
               {t("continue")}
             </Button>
           ) : (
-            <Button type="button" disabled={submitting} onClick={onSubmit}>
+            <Button type="button" disabled={submitting} onClick={() => { if (validateStep(step)) onSubmit(); }}>
               {submitting ? t("submitting") : t("submitAndDownload")}
             </Button>
           )}

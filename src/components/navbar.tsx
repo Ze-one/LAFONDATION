@@ -78,6 +78,10 @@ export function Navbar() {
 
   const showNav = !pathname.startsWith("/login") && !pathname.startsWith("/register") && !pathname.startsWith("/dashboard") && !pathname.startsWith("/admin");
 
+  // The public landing page owns its own branded navigation. Keep the
+  // authenticated shell navigation for dashboards and internal pages.
+  if (pathname === "/") return null;
+
   if (!showNav) {
     return (
       <nav className="sticky top-0 z-50 border-b border-slate-200/70 bg-background/95 backdrop-blur-sm">

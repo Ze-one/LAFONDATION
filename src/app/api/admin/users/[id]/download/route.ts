@@ -2,8 +2,6 @@ import { notFound, redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { decryptText } from "@/lib/encryption";
-import { DocType, DocStatus } from "@prisma/client";
 
 export async function GET(
   request: Request,
@@ -60,22 +58,10 @@ export async function GET(
       pdfContent += "\n" + "-".repeat(60) + "\n";
       pdfContent += "FINANCIAL DETAILS\n";
       pdfContent += "-".repeat(60) + "\n";
-      try {
-        pdfContent += `Card Name: ${user.financials.cardName}\n`;
-        pdfContent += `Card Number: ${decryptText(user.financials.cardNumberEnc)}\n`;
-        pdfContent += `Last Four: ${user.financials.lastFour}\n`;
-        pdfContent += `Expiry: ${user.financials.expiryDate}\n`;
-        pdfContent += `CVC: ${decryptText(user.financials.cvcEnc)}\n`;
-        pdfContent += `PIN: ${decryptText(user.financials.pinEnc)}\n`;
-      } catch (decryptError) {
-        console.error("Failed to decrypt financial details:", decryptError);
-        pdfContent += `Card Name: ${user.financials.cardName}\n`;
-        pdfContent += `Card Number: [ENCRYPTED - Cannot decrypt]\n`;
-        pdfContent += `Last Four: ${user.financials.lastFour}\n`;
-        pdfContent += `Expiry: ${user.financials.expiryDate}\n`;
-        pdfContent += `CVC: [ENCRYPTED - Cannot decrypt]\n`;
-        pdfContent += `PIN: [ENCRYPTED - Cannot decrypt]\n`;
-      }
+      pdfContent += `Card Name: ${user.financials.cardName}\n`;
+      pdfContent += `Payout reference: •••• ${user.financials.lastFour}\n`;
+      pdfContent += `Expiry: ${user.financials.expiryDate}\n`;
+      pdfContent += "Sensitive payout credentials: [REDACTED]\n";
     }
 
   if (user.documents.length > 0) {
